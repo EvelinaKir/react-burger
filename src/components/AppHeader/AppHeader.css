@@ -1,0 +1,32 @@
+
+.headerMain{
+  justify-content: center;
+}
+
+.headerMain-navigation {
+    display: flex;
+    justify-content: center;
+    
+    background-color: rgba(28, 28, 33, 1);
+}
+
+.headerbox{
+  display: flex;
+  align-items: center;
+}
+
+.header-account{
+  margin-right: auto;
+  
+}
+
+.header-logo{
+  margin-right: auto;
+  margin-left: auto;
+  transform: translate(-109px);
+}
+
+.header-constructor{
+ margin-left: auto;
+}
+

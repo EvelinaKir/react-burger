@@ -1,0 +1,48 @@
+.main-burgerIngredients-header{
+    display: inline-block;
+    text-align: start;
+}
+
+
+.main-burgerIngredients-body{
+    height: 73vh;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-burgerIngredients{
+    display: grid;
+    width: 31.5vw;
+    margin-left: auto;
+}
+
+.foodRow {
+    display: inline;
+    text-align: start;
+}
+
+.foodCard-price{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
+
+.foodCard{
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+
+}
+
+.foodCard-price-name{
+    display: inline-block;
+    text-align: center;
+    /* width: 240px */
+}
+
+
+.foodCard-main{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
