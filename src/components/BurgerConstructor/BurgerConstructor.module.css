@@ -1,0 +1,77 @@
+.bunsBody{
+    display: grid !important;
+    gap: 10px;
+    justify-content: center;
+}
+
+
+.bun{
+    display: flex;
+    flex-direction: row;
+    align-items: center;  
+}
+
+.ingredient{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: auto;
+    
+}
+
+.ingredient:nth-child(n){
+    min-width: fit-content;
+    margin-bottom: 16px;
+}
+
+.allIngredients{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-block-size: fit-content;
+    height: 42vh;
+}
+
+
+
+.basket{
+    width: 31.5vw;
+    display: flex;
+}
+
+.basketCountPrice{
+display: grid;
+align-items: center;
+margin-left: auto;
+margin-right: 12px
+}
+
+.basketCurrencyIcon{
+    display: grid;
+    align-items: center;
+    margin-right: 60px;
+    
+}
+
+.basketCurrencyIcon:nth-child(n){
+transform: scale(1.5);
+}
+
+
+@media  screen and (max-width: 1279px) {
+    .basket{
+        margin-left: auto;
+        margin-right: auto;
+        width: auto;
+        justify-content: center;
+        
+    }
+
+    .basketCurrencyIcon{
+        margin-right: 4vw;
+    }
+
+    .basketCountPrice{
+        margin-right: 2vw;
+        margin-left: 0px;
+    }
+  }

@@ -1,0 +1,40 @@
+.App {
+  text-align: center;
+}
+
+.collectYourBurger{
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track{
+  background: #2F2F37;
+}
+
+::-webkit-scrollbar-thumb{
+  background: #8585AD;
+}
+
+
+.burgerConstructor{
+  margin-right: auto;
+}
+
+
+@media  screen and (max-width: 1279px) {
+  .collectYourBurger:nth-child(n){
+    display: block;
+  }
+
+  ::-webkit-scrollbar{
+    width: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+  }
+}

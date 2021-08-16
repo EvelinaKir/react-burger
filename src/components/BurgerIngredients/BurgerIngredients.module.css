@@ -1,0 +1,71 @@
+.burgerIngredientsHeader{
+    display: inline-block;
+    text-align: start;
+}
+
+
+.burgerIngredientsBody{
+    height: 72vh;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.burgerIngredients{
+    display: grid;
+    margin-left: auto;
+}
+
+.foodRow {
+    display: inline;
+    text-align: start;
+}
+
+.foodCardPrice{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+}
+
+.foodCard{
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+
+}
+
+.foodCardPriceName{
+    display: inline-block;
+    text-align: center;
+}
+
+.mainTab{
+    display: flex;
+  }
+
+.foodCardMain{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+
+
+
+@media  screen and (max-width: 1279px) {
+    .burgerIngredientsBody{
+        height: 60vh;
+    margin-left: auto;
+    margin-right: auto;
+    }
+
+    .burgerIngredients{
+    display: grid;
+    justify-content: center;
+    }
+
+    .burgerIngredientsHeader{
+        justify-self: center;
+    }
+    
+    
+  }
