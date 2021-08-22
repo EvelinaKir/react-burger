@@ -1,0 +1,63 @@
+.overlay{
+    display: block;
+    position: fixed;
+    bottom: 0; left: 0; top: 0; right: 0;
+    overflow: hidden;
+    opacity: 60%;
+    background-color: #000000;
+}
+
+.mainContainer{
+    position: fixed;
+    background-color: rgba(28, 28, 33, 1);
+    border-radius: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 720px;
+    max-width: 100%;
+    text-align: center;
+}
+
+.modalHeader{
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+}
+
+
+.closeButton{
+ margin-left: auto; 
+
+}
+
+.modalBody{
+  display: flex;
+  flex-direction: column;
+}
+
+.orderNumber{
+text-shadow: 0px 4px 32px #3333FF80, 0px 0px 8px #3333FF40, 0px 0px 16px #3333FF40;
+}
+
+.text{
+    display: inline-block;
+}
+
+.orderIcon{
+    max-width: 120px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modalDetails{
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    
+}
+
+.modalDetailsText{
+    display: block;
+}

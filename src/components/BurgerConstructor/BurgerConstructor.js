@@ -1,15 +1,16 @@
 import React from "react";
-import foodData from "../../utils/data";
-import { ConstructorElement } from "@ya.praktikum/react-developer-burger-ui-components";
-import { DragIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import {
+  ConstructorElement,
+  DragIcon,
+  Button,
+  CurrencyIcon,
+} from "@ya.praktikum/react-developer-burger-ui-components";
 import BCStyles from "../BurgerConstructor/BurgerConstructor.module.css";
 import classNames from "classnames";
-import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
 
 function Buns({ data }) {
-  const res = data.food.find((elem) => {
+  const res = data.find((elem) => {
     return elem.type === "bun";
   });
 
@@ -25,7 +26,7 @@ function Buns({ data }) {
         />
       </div>
       <div className={BCStyles.allIngredients}>
-        <Ingredients data={foodData} />
+        <Ingredients data={data} />
       </div>
       <div className={classNames(BCStyles.bun, "ml-6")}>
         <ConstructorElement
@@ -41,7 +42,7 @@ function Buns({ data }) {
 }
 
 function Ingredients({ data }) {
-  return data.food.map((elem) => {
+  return data.map((elem) => {
     if (elem.type !== "bun") {
       return (
         <div className={classNames(BCStyles.ingredient)} key={elem._id + 3}>
@@ -57,10 +58,10 @@ function Ingredients({ data }) {
   });
 }
 
-function BurgerConstructor() {
+function BurgerConstructor({ info, makeAnOrder }) {
   return (
     <section className={BCStyles.body}>
-      <Buns data={foodData} />
+      <Buns data={info} />
       <div className={classNames(BCStyles.basket, "mt-10")}>
         <span
           className={classNames(
@@ -74,19 +75,26 @@ function BurgerConstructor() {
         <div className={BCStyles.basketCurrencyIcon}>
           <CurrencyIcon type="primary" />
         </div>
-        <Button type="primary" size="medium">
-          Офоромить заказ
-        </Button>
+        <div className={BCStyles.basketButton} onClick={makeAnOrder}>
+          <Button type="primary" size="medium">
+            Офоромить заказ
+          </Button>
+        </div>
       </div>
     </section>
   );
 }
 
 Buns.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 Ingredients.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+};
+
+BurgerConstructor.propTypes = {
+  info: PropTypes.array.isRequired,
+  makeAnOrder: PropTypes.func.isRequired,
 };
 export default BurgerConstructor;

@@ -1,0 +1,44 @@
+.container{
+    display: grid;
+    grid-template-columns: auto;
+    justify-items: center;
+    align-items: center;
+    margin-top: 40vh;
+    transform: scale(3);
+}
+
+.bun:nth-child(n){
+    transform: translateY(40px) scale(2);
+}
+
+.ingredients{
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto;
+    justify-items: center;
+    animation: spin 6s;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spaces {
+    from {
+        transform: scaleY(1)
+    }
+    to {
+        transform: scaleY(2);
+    }
+    
+}
+
+.text{
+    margin-top: 3vh;
+}
