@@ -24,6 +24,11 @@
   margin-right: auto;
 }
 
+.loader{
+  border-top: 16px solid blue;
+  border-right: 16px solid green;
+  border-bottom: 16px solid red;
+}
 
 @media  screen and (max-width: 1279px) {
   .collectYourBurger:nth-child(n){

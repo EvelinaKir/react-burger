@@ -1,60 +1,17 @@
 import React from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
-import "../../utils/data.js";
 import PropTypes from "prop-types";
-import foodData from "../../utils/data";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import BIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
+import bIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
 import classNames from "classnames";
-
-
-function Card(props) {
-  return (
-    <div className={BIStyles.foodCardMain}>
-      {props.data.food.map((elem) => {
-        if (elem.type === props.type) {
-          return (
-            <div
-              className={classNames(BIStyles.foodCard, "mt-6 ml-4")}
-              key={elem._id}
-            >
-              <img src={elem.image} alt={elem.name} />
-              <div className={classNames(BIStyles.foodCardPrice, "mt-1 mb-1")}>
-                <span
-                  className={classNames(
-                    BIStyles.foodCardPricePrice,
-                    "text text_type_digits-default"
-                  )}
-                >
-                  {elem.price}
-                </span>
-                <CurrencyIcon type="primary" />
-              </div>
-              <span
-                className={classNames(
-                  BIStyles.foodCardPriceName,
-                  "text text_type_main-default"
-                )}
-              >
-                {elem.name}
-              </span>
-            </div>
-          );
-        }
-      })})
-    </div>
-  );
-}
-
-Card.propTypes = {
-  data: PropTypes.object.isRequired,
-  type: PropTypes.string.isRequired,
-};
+import IngredientDetails from "../Modal/IngredientDetails";
+import { useState } from "react";
+import Modal from '../Modal/Modal';
 
 function MainTab() {
   const [current, setCurrent] = React.useState("one");
   return (
-    <div className={BIStyles.mainTab}>
+    <div className={bIStyles.mainTab}>
       <Tab value="Булки" active={current === "Булки"} onClick={setCurrent}>
         Булки
       </Tab>
@@ -68,47 +25,105 @@ function MainTab() {
   );
 }
 
-function BurgerIngredientsSection(props) {
-  return (
-    <div className={props.sectionName}>
-      <p
-        className={classNames(
-          BIStyles.foodRowName,
-          "text text_type_main-medium"
-        )}
-      >
-        {props.textContent}
-      </p>
-      <Card data={foodData} type={props.cardType} />
-    </div>
-  );
-}
+function BurgerIngredients({ info, openInfo, isOpen, decline }) {
+  const [currentCard, setCard] = useState({
+    foodCard: null,
+  });
 
-BurgerIngredientsSection.propTypes = {
-  sectionName: PropTypes.string,
-  textContent: PropTypes.string,
-  cardType: PropTypes.string,
-};
+  function modalInfo(e) {
+    let found = info.find((elem) => {
+      if (elem._id === e.currentTarget.id) return elem;
+    });
+    found ? setCard({ ...currentCard, foodCard: found }) : setCard(null);
+    openInfo();
+  }
 
-function BurgerIngredients() {
+  function Card({ type }) {
+    return (
+      <div className={bIStyles.foodCardMain}>
+        {info.map((elem) => {
+          if (elem.type === type) {
+            return (
+              <div
+                className={classNames(bIStyles.foodCard, "mt-6 ml-4")}
+                key={elem._id}
+                id={elem._id}
+                onClick={modalInfo}
+              >
+                <img src={elem.image} alt={elem.name} />
+                <div
+                  className={classNames(bIStyles.foodCardPrice, "mt-1 mb-1")}
+                >
+                  <span
+                    className={classNames(
+                      bIStyles.foodCardPricePrice,
+                      "text text_type_digits-default"
+                    )}
+                  >
+                    {elem.price}
+                  </span>
+                  <CurrencyIcon type="primary" />
+                </div>
+                <span
+                  className={classNames(
+                    bIStyles.foodCardPriceName,
+                    "text text_type_main-default"
+                  )}
+                >
+                  {elem.name}
+                </span>
+              </div>
+            );
+          }
+        })}
+      </div>
+    );
+  }
+
+  function BurgerIngredientsSection({ sectionName, textContent, cardType }) {
+    return (
+      <div className={sectionName}>
+        <p
+          className={classNames(
+            bIStyles.foodRowName,
+            "text text_type_main-medium"
+          )}
+        >
+          {textContent}
+        </p>
+        <Card type={cardType} />
+      </div>
+    );
+  }
+
+  Card.propTypes = {
+    type: PropTypes.string.isRequired,
+  };
+
+  BurgerIngredientsSection.propTypes = {
+    sectionName: PropTypes.string,
+    textContent: PropTypes.string,
+    cardType: PropTypes.string,
+  };
+
   return (
-    <section className={classNames(BIStyles.burgerIngredients, "mr-10")}>
+    <section className={classNames(bIStyles.burgerIngredients, "mr-10")}>
       <h2
         className={classNames(
-          BIStyles.burgerIngredientsHeader,
+          bIStyles.burgerIngredientsHeader,
           "text text_type_main-large mt-10 mb-5"
         )}
       >
         Соберите бургер
       </h2>
       <div>
-        <MainTab/>
+        <MainTab />
       </div>
-      <div className={BIStyles.burgerIngredientsBody}>
+      <div className={bIStyles.burgerIngredientsBody}>
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowBun,
+            bIStyles.foodRow,
+            bIStyles.foodRowBun,
             "text text_type_main-medium mt-10"
           )}
           textContent="Булки"
@@ -116,8 +131,8 @@ function BurgerIngredients() {
         />
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowSauce,
+            bIStyles.foodRow,
+            bIStyles.foodRowSauce,
             "text text_type_main-medium mt-10"
           )}
           textContent="Соусы"
@@ -125,16 +140,28 @@ function BurgerIngredients() {
         />
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowMain,
+            bIStyles.foodRow,
+            bIStyles.foodRowMain,
             "text text_type_main-medium mt-10"
           )}
           textContent="Начинки"
           cardType="main"
         />
       </div>
+      <Modal
+        isOpen={isOpen}
+        children={(<IngredientDetails card={currentCard}/>)}
+        closeModal={decline} 
+        header="Детали ингредиента"
+      />
     </section>
   );
 }
 
+BurgerIngredients.propTypes = {
+  info: PropTypes.array.isRequired,
+  openInfo: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  decline: PropTypes.func.isRequired,
+};
 export default BurgerIngredients;
