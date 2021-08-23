@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ModalStyles from "../Modal/ModalStyles.module.css";
+import modalStyles from "../Modal/ModalStyles.module.css";
 
 function ModalOverlay({ closeClick }) {
-  return <div className={ModalStyles.overlay} onClick={closeClick}></div>;
+  return <div className={modalStyles.overlay} onClick={closeClick}></div>;
 }
 
 ModalOverlay.propTypes = {

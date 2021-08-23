@@ -2,15 +2,16 @@ import React from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import BIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
+import bIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
 import classNames from "classnames";
 import IngredientDetails from "../Modal/IngredientDetails";
 import { useState } from "react";
+import Modal from '../Modal/Modal';
 
 function MainTab() {
   const [current, setCurrent] = React.useState("one");
   return (
-    <div className={BIStyles.mainTab}>
+    <div className={bIStyles.mainTab}>
       <Tab value="Булки" active={current === "Булки"} onClick={setCurrent}>
         Булки
       </Tab>
@@ -39,23 +40,23 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
 
   function Card({ type }) {
     return (
-      <div className={BIStyles.foodCardMain}>
+      <div className={bIStyles.foodCardMain}>
         {info.map((elem) => {
           if (elem.type === type) {
             return (
               <div
-                className={classNames(BIStyles.foodCard, "mt-6 ml-4")}
+                className={classNames(bIStyles.foodCard, "mt-6 ml-4")}
                 key={elem._id}
                 id={elem._id}
                 onClick={modalInfo}
               >
                 <img src={elem.image} alt={elem.name} />
                 <div
-                  className={classNames(BIStyles.foodCardPrice, "mt-1 mb-1")}
+                  className={classNames(bIStyles.foodCardPrice, "mt-1 mb-1")}
                 >
                   <span
                     className={classNames(
-                      BIStyles.foodCardPricePrice,
+                      bIStyles.foodCardPricePrice,
                       "text text_type_digits-default"
                     )}
                   >
@@ -65,7 +66,7 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
                 </div>
                 <span
                   className={classNames(
-                    BIStyles.foodCardPriceName,
+                    bIStyles.foodCardPriceName,
                     "text text_type_main-default"
                   )}
                 >
@@ -84,7 +85,7 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
       <div className={sectionName}>
         <p
           className={classNames(
-            BIStyles.foodRowName,
+            bIStyles.foodRowName,
             "text text_type_main-medium"
           )}
         >
@@ -106,10 +107,10 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
   };
 
   return (
-    <section className={classNames(BIStyles.burgerIngredients, "mr-10")}>
+    <section className={classNames(bIStyles.burgerIngredients, "mr-10")}>
       <h2
         className={classNames(
-          BIStyles.burgerIngredientsHeader,
+          bIStyles.burgerIngredientsHeader,
           "text text_type_main-large mt-10 mb-5"
         )}
       >
@@ -118,11 +119,11 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
       <div>
         <MainTab />
       </div>
-      <div className={BIStyles.burgerIngredientsBody}>
+      <div className={bIStyles.burgerIngredientsBody}>
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowBun,
+            bIStyles.foodRow,
+            bIStyles.foodRowBun,
             "text text_type_main-medium mt-10"
           )}
           textContent="Булки"
@@ -130,8 +131,8 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
         />
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowSauce,
+            bIStyles.foodRow,
+            bIStyles.foodRowSauce,
             "text text_type_main-medium mt-10"
           )}
           textContent="Соусы"
@@ -139,19 +140,19 @@ function BurgerIngredients({ info, openInfo, isOpen, decline }) {
         />
         <BurgerIngredientsSection
           sectionName={classNames(
-            BIStyles.foodRow,
-            BIStyles.foodRowMain,
+            bIStyles.foodRow,
+            bIStyles.foodRowMain,
             "text text_type_main-medium mt-10"
           )}
           textContent="Начинки"
           cardType="main"
         />
       </div>
-      <IngredientDetails
+      <Modal
         isOpen={isOpen}
-        decline={decline}
-        card={currentCard}
-        allInfo={info}
+        children={(<IngredientDetails card={currentCard}/>)}
+        closeModal={decline} 
+        header="Детали ингредиента"
       />
     </section>
   );

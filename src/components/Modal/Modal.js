@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import ModalStyles from "../Modal/ModalStyles.module.css";
+import modalStyles from "../Modal/ModalStyles.module.css";
 import classNames from "classnames";
 import ModalOverlay from "../Modal/ModalOverlay";
 import ReactDom from "react-dom";
@@ -10,13 +10,14 @@ import { useEffect, useCallback } from "react";
 const modalRoot = document.getElementById("modal-portal");
 
 function Modal({ children, header, isOpen, closeModal }) {
+
   const escapeClosed = useCallback(
     (e) => {
       if (e.key === "Escape") {
         closeModal();
       }
     },
-    [closeModal]
+    []
   );
 
   useEffect(() => {
@@ -33,24 +34,24 @@ function Modal({ children, header, isOpen, closeModal }) {
   return ReactDom.createPortal(
     <>
       <ModalOverlay closeClick={closeModal} />
-      <div className={ModalStyles.mainContainer}>
-        <div className={ModalStyles.modalHeader}>
+      <div className={modalStyles.mainContainer}>
+        <div className={modalStyles.modalHeader}>
           <span
             className={classNames(
-              ModalStyles.headerText,
+              modalStyles.headerText,
               "text text_type_main-large ml-10 mt-10"
             )}
           >
             {header}
           </span>
           <div
-            className={classNames(ModalStyles.closeButton, "mt-15 mr-10")}
+            className={classNames(modalStyles.closeButton, "mt-15 mr-10")}
             onClick={closeModal}
           >
             <img alt="escape button" src={esc} />
           </div>
         </div>
-        <div className={ModalStyles.modalBody}>{children}</div>
+        <div className={modalStyles.modalBody}>{children}</div>
       </div>
     </>,
     modalRoot

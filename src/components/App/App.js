@@ -1,11 +1,12 @@
 import React from "react";
-import AppStyles from "./App.module.css";
+import appStyles from "./App.module.css";
 import AppHeader from "../AppHeader/AppHeader";
 import BurgerIngredients from "../BurgerIngredients/BurgerIngredients";
 import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
 import Spiner from "../Spiner/Spiner";
 import { useState, useEffect } from "react";
 import OrderDetails from "../Modal/OrderDetails";
+import Modal from '../Modal/Modal';
 
 function App() {
   const [state, setState] = useState({
@@ -21,9 +22,13 @@ function App() {
       try {
         setState({ ...state, isLoading: true });
         const res = await fetch(url);
+        if(res.ok) {
         const result = await res.json();
         setState({ ...state, isLoading: false, foodData: result });
-      } catch (e) {
+      } else {
+        throw new Error(`Ошибка ${res.status}`)
+      }
+    } catch (e) {
         setState({ ...state, error: e, hasError: true });
       }
     })();
@@ -38,13 +43,13 @@ function App() {
   const { openModalOrder, openModalProductInfo } = isOpen;
 
   return (
-    <div className={AppStyles.App}>
+    <div className={appStyles.App}>
       <AppHeader />
-      <main className={AppStyles.main}>
+      <main className={appStyles.main}>
         {isLoading && <Spiner />}
         {hasError && "Ошибка" && <div>{error}</div>}
         {!isLoading && !hasError && foodData && (
-          <div className={AppStyles.collectYourBurger}>
+          <div className={appStyles.collectYourBurger}>
             <BurgerIngredients
               info={foodData.data}
               openInfo={() =>
@@ -55,16 +60,18 @@ function App() {
                 setIsOpen({ ...isOpen, openModalProductInfo: false })
               }
             />
-            <div className={AppStyles.burgerConstructor}>
+            <div className={appStyles.burgerConstructor}>
               <BurgerConstructor
                 info={foodData.data}
                 makeAnOrder={() =>
                   setIsOpen({ ...isOpen, openModalOrder: true })
                 }
               />
-              <OrderDetails
+              <Modal
                 isOpen={openModalOrder}
-                decline={() => setIsOpen({ ...isOpen, openModalOrder: false })}
+                closeModal={() => setIsOpen({ ...isOpen, openModalOrder: false })}
+                header={(<span className={"mt-15"}></span>)}
+                children={<OrderDetails/>}
               />
             </div>
           </div>

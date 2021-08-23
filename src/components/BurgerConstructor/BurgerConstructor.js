@@ -5,7 +5,7 @@ import {
   Button,
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import BCStyles from "../BurgerConstructor/BurgerConstructor.module.css";
+import bCStyles from "../BurgerConstructor/BurgerConstructor.module.css";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 
@@ -15,24 +15,24 @@ function Buns({ data }) {
   });
 
   return (
-    <div className={classNames(BCStyles.bunsBody, "mt-25")} key={res._id + 1}>
-      <div className={classNames(BCStyles.bun, "ml-6")}>
+    <div className={classNames(bCStyles.bunsBody, "mt-25")} key={res._id + 1}>
+      <div className={classNames(bCStyles.bun, "ml-6")}>
         <ConstructorElement
           type="top"
           isLocked={true}
-          text={res.name}
+          text={res.name + "\n" + '(вверх)'} 
           price={res.price}
           thumbnail={res.image_mobile}
         />
       </div>
-      <div className={BCStyles.allIngredients}>
+      <div className={bCStyles.allIngredients}>
         <Ingredients data={data} />
       </div>
-      <div className={classNames(BCStyles.bun, "ml-6")}>
+      <div className={classNames(bCStyles.bun, "ml-6")}>
         <ConstructorElement
           type="bottom"
           isLocked={true}
-          text={res.name}
+          text={res.name + "\n" + '(вниз)'}
           price={res.price}
           thumbnail={res.image_mobile}
         />
@@ -45,7 +45,7 @@ function Ingredients({ data }) {
   return data.map((elem) => {
     if (elem.type !== "bun") {
       return (
-        <div className={classNames(BCStyles.ingredient)} key={elem._id + 3}>
+        <div className={classNames(bCStyles.ingredient)} key={elem._id + 3}>
           <DragIcon type="primary" />
           <ConstructorElement
             text={elem.name}
@@ -60,22 +60,22 @@ function Ingredients({ data }) {
 
 function BurgerConstructor({ info, makeAnOrder }) {
   return (
-    <section className={BCStyles.body}>
+    <section className={bCStyles.body}>
       <Buns data={info} />
-      <div className={classNames(BCStyles.basket, "mt-10")}>
+      <div className={classNames(bCStyles.basket, "mt-10")}>
         <span
           className={classNames(
-            BCStyles.basketCountPrice,
+            bCStyles.basketCountPrice,
             "text",
             "text_type_digits-medium"
           )}
         >
           666
         </span>
-        <div className={BCStyles.basketCurrencyIcon}>
+        <div className={bCStyles.basketCurrencyIcon}>
           <CurrencyIcon type="primary" />
         </div>
-        <div className={BCStyles.basketButton} onClick={makeAnOrder}>
+        <div className={bCStyles.basketButton} onClick={makeAnOrder}>
           <Button type="primary" size="medium">
             Офоромить заказ
           </Button>
