@@ -1,0 +1,33 @@
+
+.headerMain{
+  justify-content: center;
+}
+
+.headerMainNav{
+    display: flex;
+    justify-content: center;
+    background-color: rgba(28, 28, 33, 1);
+}
+
+.headerbox{
+  display: flex;
+  align-items: center;
+}
+
+.headerAccount{
+  margin-right: auto;
+  
+}
+
+.headerLogo{
+  margin-right: auto;
+  margin-left: auto;
+  transform: translate(-109px);
+}
+
+.headerСonstructor{
+ margin-left: auto;
+}
+
+
+
