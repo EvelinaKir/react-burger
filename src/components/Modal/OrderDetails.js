@@ -2,12 +2,11 @@ import ready from "../../images/modalImages/animatedModalReady.gif";
 import modalStyles from "../Modal/ModalStyles.module.css";
 import React from "react";
 import classNames from "classnames";
-import { useContext } from "react";
-import { OrderContext } from "../../services/orderContext";
+import {useSelector} from 'react-redux' 
+
 
 function OrderDetails() {
-  const orderContext = useContext(OrderContext);
-  const { result, isLoading, error } = orderContext;
+const {hasError, error, isLoading, orderInfo, success} = useSelector(state => state.createdOrder)
   return (
     <>
       {isLoading && (
@@ -21,7 +20,7 @@ function OrderDetails() {
           Loading...
         </span>
       )}
-      {!isLoading && !error && result && (
+      {!isLoading && !hasError && success && (
         <>
           <span
             className={classNames(
@@ -30,7 +29,7 @@ function OrderDetails() {
               "text text_type_digits-large mb-8"
             )}
           >
-            {result.order.number}
+            {orderInfo.order.number}
           </span>
           <span
             className={classNames(
@@ -65,8 +64,18 @@ function OrderDetails() {
           </span>
         </>
       )}
+      {hasError && (
+        <span className={classNames(
+          modalStyles.orderNumber,
+          modalStyles.text,
+          "text text_type_digits-large mb-8"
+        )}>
+          {`Ops! Ошибка ${error}`} 
+        </span>
+      )}
     </>
   );
+  
 }
 
 export default OrderDetails;
