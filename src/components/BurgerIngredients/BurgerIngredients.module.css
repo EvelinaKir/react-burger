@@ -31,7 +31,11 @@
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
+    position: relative;
+}
 
+.cardWrapper{
+    position: relative;
 }
 
 .foodCardPriceName{
@@ -47,8 +51,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
-
-
 
 
 @media  screen and (max-width: 1279px) {
