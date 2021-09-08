@@ -9,15 +9,16 @@ import OrderDetails from "../Modal/OrderDetails";
 import Modal from "../Modal/Modal";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-
+import OrderModalError from '../Modal/OrderModalError'
 import {useDispatch, useSelector} from 'react-redux'
 import {getIngredientsApi} from '../../services/actions/index'
 import IngredientDetails from '../Modal/IngredientDetails'
 
+
 function App() {
   const dispatch = useDispatch();
   const  {  hasError, error, isLoading, foodData } = useSelector(state => state.apiList)
-  const {ingridientModal, orderModal} = useSelector(state => state.modalInfo)
+  const {ingridientModal, orderModal, orderModalError} = useSelector(state => state.modalInfo)
   const url = "https://norma.nomoreparties.space/api/ingredients";
 
   useEffect(() => {
@@ -47,6 +48,13 @@ function App() {
                   children={<OrderDetails />
                   }
                 />}
+                {
+                orderModalError &&  <Modal
+                 children={<OrderModalError />
+                 }
+               /> 
+                }
+                  
           </div>
         )}
       </main>

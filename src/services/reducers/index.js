@@ -9,6 +9,7 @@ import {
   MODAL_INGRIDIENT_OPEN,
   MODAL_ORDER_OPEN,
   MODAL_CLOSE,
+  MODAL_ORDER_ERROR,
   WRITE_CURRENT_INGREDIENT,
   DELETE_CURRENT_INGREDIENT,
   SEND_ORDER_REQUEST,
@@ -17,8 +18,8 @@ import {
   TAB_SWITCH,
   CONSTRUCTOR_CARD_CHANGE,
   COUNT_TOTAL_PRICE,
-  COUNT_CARD
-  
+  COUNT_CARD,
+  CONSTRUCTOR_CLEAN,
 } from "../actions/index";
 
 const initialIngredientsApi = {
@@ -53,6 +54,7 @@ const initialOrder = {
   error: null,
   isLoading: false,
   orderInfo: null,
+  orderBase: [],
   success: false
 }
 
@@ -97,7 +99,6 @@ const ingredientsApiList = (state = initialIngredientsApi, action) => {
 
         }
       }
-    
     default: {
       return state;
     }
@@ -125,6 +126,13 @@ const ingredientsConstructorList = (
       return {
         ...state,
         mainIngredients: action.value
+      }
+    }
+    case CONSTRUCTOR_CLEAN: {
+      return {
+        ...state,
+        mainIngredients: initialIngredientsConstructorList.mainIngredients,
+        bun: initialIngredientsConstructorList.bun
       }
     }
     default: {
@@ -169,7 +177,8 @@ const modalInfo = (state = initialModal, action) => {
         ...state,
         ingridientModal: action.open,
         orderModal: false,
-        allClose: false
+        allClose: false,
+        orderModalError: false,
   
       };
     }
@@ -178,15 +187,25 @@ const modalInfo = (state = initialModal, action) => {
         ...state,
         orderModal: action.open,
         ingridientModal: false,
+        orderModalError: false,
         allClose: false
   
       };
+    }
+    case MODAL_ORDER_ERROR: {
+      return {
+        ...state,
+        orderModalError: action.open,
+        ingridientModal: false,
+        allClose: false,
+      }
     }
     case MODAL_CLOSE: {
       return {
         ...state,
         ingridientModal: false,
         orderModal: false,
+        orderModalError: false,
         allClose: true
       }
     }
@@ -211,6 +230,7 @@ const createdOrder = (state = initialOrder, action) => {
            success: true,
            hasError: false,
           orderInfo: action.data,
+          orderBase: state.orderBase.concat(action.data)
           
          
         }

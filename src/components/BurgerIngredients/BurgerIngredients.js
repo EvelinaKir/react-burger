@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { currentIngredient } from "../../services/actions/index";
 import { useRef, useEffect } from "react";
 import { switchTab } from "../../services/actions";
-import {useDrag, useDrop} from 'react-dnd';
+import {useDrag} from 'react-dnd';
 import { itemTypes } from "../../services/actions/index";
-import {count} from '../../services/actions/index'
+
 function MainTab() {
   const dispatch = useDispatch();
   const current = useSelector((state) => state.tabSwtich.currentTab);
@@ -57,7 +57,7 @@ function Cards({ type }) {
       {info.map((elem, i) => {
         if (elem.type === type) {
           return (
-            <Card id={elem._id} image={elem.image} price={elem.price} name={elem.name} index={i} elem={elem} key={i} />
+            <Card id={elem._id} image={elem.image} price={elem.price} name={elem.name} index={i} elem={elem} key={elem._id} />
           );
         }
       })}
@@ -69,8 +69,7 @@ function Cards({ type }) {
 function Card({id, image, price, name, index, elem}){
 
   const dispatch = useDispatch();
-  const info = useSelector((state) => state.apiList.foodData);
-  const {mainIngredients,bun} = useSelector( state => state.constructorList)
+
   const [{isDragging}, dragRef] = useDrag({
     type: itemTypes.ingredient,
     item: {
@@ -114,6 +113,8 @@ function Card({id, image, price, name, index, elem}){
   </div>
   )
 }
+
+
 
 function BurgerIngredientsSection({ sectionName, textContent, cardType }) {
   return (
@@ -161,7 +162,7 @@ function BurgerIngredients() {
         ingredientsScroll(e);
       });
     };
-  });
+  },[]);
 
   return (
     <section className={classNames(bIStyles.burgerIngredients, "mr-10")}>

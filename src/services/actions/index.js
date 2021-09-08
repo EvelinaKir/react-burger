@@ -15,6 +15,8 @@ export const TAB_SWITCH = "TAB_SWITCH";
 export const CONSTRUCTOR_CARD_CHANGE = "CONSTRUCTOR_CARD_CHANGE";
 export const COUNT_TOTAL_PRICE = "COUNT_TOTAL_PRICE";
 export const COUNT_CARD = "COUNT_CARD";
+export const MODAL_ORDER_ERROR = 'MODAL_ORDER_ERROR';
+export const CONSTRUCTOR_CLEAN = 'CONSTRUCTOR_CLEAN';
 
 export function getIngredientsApi(url) {
   return function (dispatch) {
@@ -22,6 +24,7 @@ export function getIngredientsApi(url) {
       type: GET_INGREDIENTS_API_REQUEST,
     });
     (async () => {
+      try{
       const res = await fetch(url);
       if (res.ok) {
         const result = await res.json();
@@ -35,10 +38,11 @@ export function getIngredientsApi(url) {
           type: GET_INGREDIENTS_API_SUCCESS,
           items: last,
         });
-      } else {
+      } 
+    } catch(error) {
         dispatch({
           type: GET_INGREDIENTS_API_FAILED,
-          error: `Ошибка ${res.status}`,
+          error: `Ошибка! ${error.message}`,
         });
       }
     })();
@@ -98,6 +102,7 @@ export function sendOrder(data) {
     };
     const url = "https://norma.nomoreparties.space/api/orders";
     (async () => {
+      try{
       const res = await fetch(url, requestOption);
       if (res.ok) {
         const result = await res.json();
@@ -106,10 +111,10 @@ export function sendOrder(data) {
           type: SEND_ORDER_SUCCESS,
           data: last,
         });
-      } else {
+      }} catch(error) {
         dispatch({
           type: SEND_ORDER_FAILED,
-          error: res.status,
+          error: error.message,
         });
       }
     })();
@@ -142,7 +147,7 @@ export function deleteCard(mainIngredients, id, elemKey) {
   let result = [];
   const filtered = mainIngredients.filter((elem) => {
     elem.keyAdd--;
-    return elem != elemKey;
+    return elem !== elemKey;
   });
   mainIngredients.length === 1
     ? (result = mainIngredients)
@@ -156,9 +161,19 @@ export function deleteCard(mainIngredients, id, elemKey) {
 }
 
 export function countPrice(mainIngredients, bun) {
-  const main = mainIngredients.map((elem) => elem.price);
-  const bunPrice = bun.price * 2;
-  const mainPrice = main.reduce((a, b) => a + b, 0);
+  let mainPrice = 0
+  let bunPrice = 0
+  if (bun.type) {
+  bunPrice = bun.price * 2;
+  }
+  if (!bun.type){
+    bunPrice = 0
+  }
+   if (mainIngredients.length > 0) {
+   mainPrice = mainIngredients.map((elem) => elem.price).reduce((a, b) => a + b, 0)}
+   if (mainIngredients.length === 0) {
+     mainPrice = 0
+   }
   return function (dispatch) {
     dispatch({
       type: COUNT_TOTAL_PRICE,
@@ -177,7 +192,7 @@ export function addCard(elem, mainIngredients, bun) {
   let newElem = {};
   if (elem.item)
     return function (dispatch) {
-      if (elem.item.type === "bun" && elem.item != bun) {
+      if (elem.item.type === "bun" && elem.item !== bun) {
         elem.item.keyAdd = 2;
         bun.counter = 0;
         elem.item.counter = 2;
@@ -186,11 +201,11 @@ export function addCard(elem, mainIngredients, bun) {
           bun: elem.item,
         });
       }
-      if (elem.item.type != "bun" && !mainIngredients.includes(elem.item)) {
+      if (elem.item.type !== "bun" && !mainIngredients.includes(elem.item)) {
         newMainIngredients.push(elem.item);
         elem.item.keyAdd++;
       }
-      if (elem.item.type != "bun" && mainIngredients.includes(elem.item)) {
+      if (elem.item.type !== "bun" && mainIngredients.includes(elem.item)) {
         elem.item.keyAdd++;
         Object.assign(newElem, elem.item);
         newElem.key += newElem.keyAdd;
@@ -204,13 +219,13 @@ export function addCard(elem, mainIngredients, bun) {
 }
 
 export function count(mainIngredients, elemKey, totalCard) {
-  const newTotal = [...totalCard.foodData].filter((elem) => elem.type != "bun");
-  const newBun = [...totalCard.foodData].filter((elem) => elem.type === "bun");
+  const newTotal = [...totalCard.foodData].filter((elem) => elem.type !== "bun");
   const newMainIngredients = [...mainIngredients];
   const counted = newMainIngredients.filter(
     (elem) => elem._id === elemKey._id
   ).length;
   const exact = newTotal.find((elem) => elem._id === elemKey._id);
+  
 
   const filtered = newTotal.indexOf(exact);
 
@@ -218,16 +233,17 @@ export function count(mainIngredients, elemKey, totalCard) {
     .filter((x) => !newMainIngredients.includes(x))
     .concat(newMainIngredients.filter((x) => !newTotal.includes(x)));
 
-  if (difference) {
+  
+    if (difference) {
     difference.map((elem) => {
       elem.counter = 0;
       return elem;
     });
     newTotal.concat(difference).filter((elem, index) => {
-      return newTotal.indexOf(elem) == index && elem.counter == 0;
+      return newTotal.indexOf(elem) === index && elem.counter === 0;
     });
   }
-
+  
   exact.counter = counted;
   newTotal.splice(filtered, 1, exact);
 
@@ -238,4 +254,49 @@ export function count(mainIngredients, elemKey, totalCard) {
       value: totalCard.foodData
     });
   };
+}
+
+export function closeModal(){
+  return function(dispatch){
+    dispatch({
+    type: 'MODAL_CLOSE'
+  })
+  dispatch({
+    type: 'DELETE_CURRENT_INGREDIENT'
+  })
+  }
+}
+
+export function openModalOrder(infoToSend){
+  return function(dispatch){
+    if (infoToSend) {
+      dispatch({
+        type: "CONSTRUCTOR_CLEAN"
+      })
+    dispatch(sendOrder(infoToSend))
+  dispatch({
+    type: "MODAL_ORDER_OPEN",
+    open: true,
+  }) 
+  }
+  if (!infoToSend){
+    dispatch({
+    type: "MODAL_ORDER_ERROR",
+    open: true,
+  })
+  }
+  }
+};
+
+export function cleanCounter(total){
+  const result = total.map((elem) => {
+    elem.counter = 0
+    return elem
+  })
+  return function(dispatch){
+    dispatch({
+      type: COUNT_CARD,
+      value: result
+    });
+  }
 }

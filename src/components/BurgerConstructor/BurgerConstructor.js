@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { useDrag, useDrop } from "react-dnd";
 import {
+  cleanCounter,
+  openModalOrder,
   count,
   switchCard,
   deleteCard,
-  sendOrder,
-  getConstructorIngredients,
   countPrice,
   addCard,
 } from "../../services/actions/index";
@@ -42,25 +42,28 @@ function Buns() {
       key={bun._id + bun.keyAdd}
     >
       <div className={classNames(bCStyles.bun, "ml-6")}>
-        <ConstructorElement
+        {bun.type && <ConstructorElement
           type="top"
           isLocked={true}
           text={bun.name + "\n" + "(вверх)"}
           price={bun.price}
           thumbnail={bun.image_mobile}
-        />
+        />}
+        {!bun.type && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129047;</span>}
       </div>
       <div className={bCStyles.allIngredients} ref={dropIngredient}>
-        <Ingredients />
+        {mainIngredients.length > 0 && <Ingredients />}
+        {mainIngredients.length === 0 && <span className={classNames(bCStyles.noIngredients, "text text_type_main-medium text_color_inactive")}> &#129046; Добавьте ингредиенты &#129044;</span>}
       </div>
       <div className={classNames(bCStyles.bun, "ml-6")}>
-        <ConstructorElement
+       {bun.type && <ConstructorElement
           type="bottom"
           isLocked={true}
           text={bun.name + "\n" + "(вниз)"}
           price={bun.price}
           thumbnail={bun.image_mobile}
-        />
+        />} 
+        {!bun.type && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129045;</span>}
       </div>
     </div>
   );
@@ -85,14 +88,16 @@ function Ingredients() {
   });
 }
 
-function Ingredient({ id, name, price, image, index, version, elemKey }) {
+function Ingredient({ id, name, price, image, index, elemKey }) {
   const dispatch = useDispatch();
   const totalCard = useSelector((state) => state.apiList);
+  const orderWasCreated = useSelector(state => state.createdOrder.orderBase)
+  
   const { mainIngredients, bun } = useSelector(
     (state) => state.constructorList
   );
   useEffect(() => {
-    dispatch(count(mainIngredients, elemKey, totalCard));
+    dispatch(count(mainIngredients, elemKey, totalCard, orderWasCreated));
   }, [mainIngredients, bun, deleteCard, switchCard]);
 
   const ref = useRef(null);
@@ -165,31 +170,23 @@ Ingredient.propTypes = {
   index: PropTypes.number,
 };
 function BurgerConstructor() {
+  const total = useSelector(state => state.apiList.foodData)
   const dispatch = useDispatch();
-  const store = useSelector((state) => state.apiList.foodData);
   const { mainIngredients, bun } = useSelector(
     (state) => state.constructorList
   );
 
   useEffect(() => {
     dispatch(countPrice(mainIngredients, bun));
+
   }, [mainIngredients, bun]);
 
   const totalPrice = useSelector((state) => state.price.totalPrice);
-  const infoToSend = mainIngredients
+  let infoToSend = null 
+  bun.type ? infoToSend = mainIngredients
     .map((elem) => elem._id)
-    .concat(bun._id, bun._id);
-  const openModalOrder = (infoToSend) => {
-    dispatch(sendOrder(infoToSend));
-    dispatch({
-      type: "MODAL_ORDER_OPEN",
-      open: true,
-    });
-  };
+    .concat(bun._id, bun._id) : infoToSend = null
 
-  useEffect(() => {
-    dispatch(getConstructorIngredients(store));
-  }, []);
 
   return (
     <section className={bCStyles.body}>
@@ -209,7 +206,7 @@ function BurgerConstructor() {
         </div>
         <div
           className={bCStyles.basketButton}
-          onClick={() => openModalOrder(infoToSend)}
+          onClick={() => dispatch(openModalOrder(infoToSend), cleanCounter(total))}
         >
           <Button type="primary" size="medium">
             Офоромить заказ
