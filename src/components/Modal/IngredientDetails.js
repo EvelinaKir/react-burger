@@ -57,3 +57,4 @@ Detail.propTypes ={
 }
 
 export default IngredientDetails;
+

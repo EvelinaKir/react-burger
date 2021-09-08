@@ -70,3 +70,4 @@ Modal.propTypes = {
 };
 
 export default Modal;
+
