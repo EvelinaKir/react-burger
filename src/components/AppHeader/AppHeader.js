@@ -5,8 +5,80 @@ import { ListIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ProfileIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import appHeaderStyles from "../AppHeader/AppHeader.module.css";
 import classNames from "classnames";
+import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCookie } from "../../services/actions/auth";
+import { getUserRequest, getUserRefresh } from "../../services/actions/auth";
 
 function AppHeader() {
+  const { failedToRefresh, needToRefresh, logged, userInfo } = useSelector(
+    (state) => state.userInfo
+  );
+  const location = useLocation();
+  const all = useSelector((state) => state.userInfo);
+
+useEffect(() => {
+  dispatch(getUserRequest())
+}, [])
+  
+  const dispatch = useDispatch();
+  useEffect(() => {
+    
+
+    if (logged) {
+      dispatch({
+        type: "INPUT_PASSWORD_VALUE",
+        value: "",
+      });
+    }
+    if (!logged) {
+      dispatch({
+        type: 'CLEAR_ERROR_PROFILE'
+      })
+      dispatch({
+        type: 'CLEAR_ERROR_FOGOT'
+      })
+      dispatch({
+        type: 'CLEAR_ERROR_REGISTRATION'
+      })
+      dispatch({
+        type: "INPUT_PASSWORD_VALUE",
+        value: "",
+      });
+      dispatch({
+        type: "INPUT_NAME_VALUE",
+        value: "",
+      });
+      dispatch({
+        type: "INPUT_EMAIL_VALUE",
+        value: "",
+      });
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (logged) {
+      dispatch({
+        type: "INPUT_NAME_VALUE",
+        value: userInfo.user.name,
+      });
+      dispatch({
+        type: "INPUT_EMAIL_VALUE",
+        value: userInfo.user.email,
+      });
+      dispatch({
+        type: "INPUT_PASSWORD_VALUE",
+        value: "",
+      });
+      dispatch({
+        type: "USER_NEED_TO_REFRESH",
+        value: false,
+      });
+    }
+  }, [logged]);
+
   return (
     <header className={appHeaderStyles.headerMain}>
       <nav>
@@ -18,7 +90,12 @@ function AppHeader() {
               "mr-2 mt-4 mb-4"
             )}
           >
-            <a href="#" className={appHeaderStyles.headerbox}>
+            <NavLink
+              exact
+              to={{ pathname: "/" }}
+              className={appHeaderStyles.headerbox}
+              activeClassName={appHeaderStyles.activeLink}
+            >
               <div className="ml-5">
                 <BurgerIcon type="secondary" />
               </div>
@@ -30,14 +107,18 @@ function AppHeader() {
                   "ml-2 mr-5"
                 )}
               >
-                {" "}
                 Конструктор
               </p>
-            </a>
+            </NavLink>
           </li>
 
           <li className={classNames(appHeaderStyles.headerbox, "mt-4 mb-4")}>
-            <a href="#" className={appHeaderStyles.headerbox}>
+            <NavLink
+              exact
+              activeClassName={appHeaderStyles.activeLink}
+              to={{ pathname: "/feed" }}
+              className={appHeaderStyles.headerbox}
+            >
               <div className="ml-5">
                 <ListIcon type="secondary" />
               </div>
@@ -51,7 +132,7 @@ function AppHeader() {
               >
                 Лента заказов
               </p>
-            </a>
+            </NavLink>
           </li>
 
           <li
@@ -61,11 +142,9 @@ function AppHeader() {
               "mt-4 mb-4"
             )}
           >
-            <a href="#" className={appHeaderStyles.headerbox}>
-              <div>
-                <Logo />
-              </div>
-            </a>
+            <div className={appHeaderStyles.headerbox}>
+              <Logo />
+            </div>
           </li>
           <li
             className={classNames(
@@ -74,7 +153,12 @@ function AppHeader() {
               "mt-4 mb-4"
             )}
           >
-            <a href="#" className={appHeaderStyles.headerbox}>
+            <NavLink
+              exact
+              activeClassName={appHeaderStyles.activeLink}
+              to={{ pathname: "/profile" }}
+              className={appHeaderStyles.headerbox}
+            >
               <div className="ml-5">
                 <ProfileIcon type="secondary" />
               </div>
@@ -88,7 +172,7 @@ function AppHeader() {
               >
                 Личный кабинет
               </p>
-            </a>
+            </NavLink>
           </li>
         </ul>
       </nav>

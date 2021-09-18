@@ -22,6 +22,8 @@ import {
   CONSTRUCTOR_CLEAN,
 } from "../actions/index";
 
+import {userRegistrationInfo, inputValue, userInfo, forgotRequest, profileChange} from './auth'
+
 const initialIngredientsApi = {
   hasError: false,
   error: null,
@@ -290,4 +292,9 @@ export const rootReducer = combineReducers({
     createdOrder: createdOrder,
     tabSwtich: tabSwtich,
     price: totalPrice,
+    registration: userRegistrationInfo,
+    inputValue : inputValue,
+    userInfo : userInfo,
+    forgotRequest : forgotRequest,
+    profileTabChange : profileChange,
 });

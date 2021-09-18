@@ -21,6 +21,7 @@ import {
   addCard,
 } from "../../services/actions/index";
 import { itemTypes } from "../../services/actions/index";
+import { useHistory } from 'react-router-dom';  
 function Buns() {
   const { mainIngredients, bun } = useSelector(
     (state) => state.constructorList
@@ -170,6 +171,8 @@ Ingredient.propTypes = {
   index: PropTypes.number,
 };
 function BurgerConstructor() {
+  const history = useHistory()
+  const logged = useSelector(state => state.userInfo.logged)
   const total = useSelector(state => state.apiList.foodData)
   const dispatch = useDispatch();
   const { mainIngredients, bun } = useSelector(
@@ -206,7 +209,7 @@ function BurgerConstructor() {
         </div>
         <div
           className={bCStyles.basketButton}
-          onClick={() => dispatch(openModalOrder(infoToSend), cleanCounter(total))}
+          onClick={() => logged ? dispatch(openModalOrder(infoToSend), cleanCounter(total)) : history.replace({pathname: '/login'})}
         >
           <Button type="primary" size="medium">
             Офоромить заказ

@@ -1,0 +1,53 @@
+.navOption{
+    text-decoration: inherit;
+    color: #8585AD;
+    display: block;
+    max-width: 320px;
+}
+
+.navButton{
+    background: none!important;
+  border: none;
+  padding: 0!important;
+  color: #8585AD;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.active{
+    color: #F2F2F3;
+    display: block;
+}
+
+
+.mainbox{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+    margin-top: 20vh;
+
+}
+
+.input{
+display: grid;
+justify-items: center;
+}
+
+
+.text{
+    display: block;
+
+}
+
+.link{
+    color: #4C4CFF;
+    
+}
+.navigation{
+    display: grid;
+    justify-items: start;
+    margin-left: auto;
+}
+.detailed{
+    margin-right: auto;
+}

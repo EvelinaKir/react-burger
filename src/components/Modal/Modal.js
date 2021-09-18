@@ -8,17 +8,22 @@ import esc from "../../images/modalImages/modalEsc.svg";
 import { useEffect, useCallback } from "react";
 import {useDispatch, useSelector} from 'react-redux' 
 import { closeModal } from "../../services/actions";
+import {useHistory, useRouteMatch} from 'react-router-dom';
 
 const modalRoot = document.getElementById("modal-portal");
 
 function Modal({children, header}) {
-
+  const history = useHistory()
+  const closeIngredient = () => {
+    dispatch(closeModal())
+    history.replace({pathname: '/'})
+}
 const dispatch = useDispatch();
 const {allClose} = useSelector(state => state.modalInfo)
   const escapeClosed = useCallback(
     (e) => {
       if (e.key === "Escape") {
-         dispatch(closeModal())
+         closeIngredient()
       }
     },
     []
@@ -37,7 +42,7 @@ if (allClose) {
 
   return ReactDom.createPortal(
     <>
-      <ModalOverlay closeClick={() => dispatch(closeModal())} />
+      <ModalOverlay closeClick={() => closeIngredient()} />
       <div className={modalStyles.mainContainer}>
         <div className={modalStyles.modalHeader}>
           <span
@@ -50,7 +55,7 @@ if (allClose) {
           </span>
           <div
             className={classNames(modalStyles.closeButton, "mt-15 mr-10")}
-            onClick={() => dispatch(closeModal())}
+            onClick={() => closeIngredient()}
           >
             <img alt="escape button" src={esc} />
           </div>

@@ -1,0 +1,9 @@
+.text {
+    display: block;
+}
+
+.mainbox {
+    display: grid;
+    justify-items: center;
+    margin-top: 20vh;
+}

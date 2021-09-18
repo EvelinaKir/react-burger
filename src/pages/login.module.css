@@ -1,0 +1,23 @@
+.mainbox{
+    display: grid;
+    min-width: 480px;
+    justify-items: stretch;
+    margin-top: 20vh;
+
+}
+
+.input{
+display: grid;
+justify-items: center;
+}
+
+
+.text{
+    display: block;
+
+}
+
+.link{
+    color: #4C4CFF;
+    
+}
