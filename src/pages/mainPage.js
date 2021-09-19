@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, useRouteMatch, Switch } from "react-router-dom";
 import BurgerIngredients from "../components/BurgerIngredients/BurgerIngredients";
 import BurgerConstructor from "../components/BurgerConstructor/BurgerConstructor";
 import OrderDetails from "../components/Modal/OrderDetails";
@@ -12,6 +12,7 @@ import IngredientDetails from "../components/Modal/IngredientDetails";
 import mainStyles from "./mainPage.module.css";
 
 function MainPage() {
+  const { path } = useRouteMatch();
   const { ingridientModal, orderModal, orderModalError } = useSelector(
     (state) => state.modalInfo
   );
@@ -25,16 +26,16 @@ function MainPage() {
             <BurgerConstructor />
           </div>
         </DndProvider>
-        <Route path="/ingredients/:id">
-          {ingridientModal ? (
-            <Modal
-              children={<IngredientDetails />}
-              header={"Детали ингредиента"}
-            />
-          ) : (
-            <IngredientDetails header={"Детали ингредиента"} />
+        <Switch>
+          {ingridientModal && (
+            <Route path={`/ingredients/:id`}>
+              <Modal
+                children={<IngredientDetails />}
+                header={"Детали ингредиента"}
+              />
+            </Route>
           )}
-        </Route>
+        </Switch>
         {orderModal && <Modal children={<OrderDetails />} />}
         {orderModalError && <Modal children={<OrderModalError />} />}
       </div>

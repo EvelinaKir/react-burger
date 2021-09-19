@@ -78,10 +78,10 @@ const profileTab = useSelector((state) => state.profileTabChange.profileTab);
 
         <div className={profileStyles.detailed}>
           <Switch>
-            <UnloggedProtectedRoute path={`/profile`} exact={true}>
+            <UnloggedProtectedRoute exact path={`/profile`} >
               <ProfileMain />
             </UnloggedProtectedRoute>
-            <UnloggedProtectedRoute path={`/profile/orders`} exact={true}>
+            <UnloggedProtectedRoute path={`/profile/orders`} >
               <OrderHistory />
             </UnloggedProtectedRoute>
           </Switch>
