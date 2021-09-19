@@ -1,23 +1,30 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import registerStyles from "./register.module.css";
-
 import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
 import { LoginInput } from "../components/Inputs/LoginInput";
 import { newUserRegistration } from "../services/actions/auth";
-import ErrorPrompt from '../components/ErrorPrompt/ErrorPrompt'
+import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function Register() {
-  const {hasError, error} = useSelector(state => state.registration)
-  
+  const { hasError, error, regInfo } = useSelector(
+    (state) => state.registration
+  );
+  console.log(regInfo);
+  const history = useHistory();
   const dispatch = useDispatch();
   const value = useSelector((state) => state.inputValue);
+  const registration = () => {
+    dispatch(newUserRegistration(value));
+    if (!hasError) {
+      history.replace({ pathname: "/login" });
+    }
+  };
   return (
     <div className={classNames(registerStyles.mainbox)}>
       <span
@@ -41,11 +48,13 @@ function Register() {
         <Button
           type="primary"
           size="medium"
-          onClick={() => dispatch(newUserRegistration(value))}
+          onClick={() => {
+            registration();
+          }}
         >
           Зарегистрироваться
         </Button>
-        {hasError && <ErrorPrompt error={error}/>} 
+        {hasError && <ErrorPrompt error={error} />}
       </div>
       <div className={classNames(registerStyles.text)}>
         <span className={"text text_type_main-default text_color_inactive"}>

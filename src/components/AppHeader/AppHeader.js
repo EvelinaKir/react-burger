@@ -9,73 +9,51 @@ import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCookie } from "../../services/actions/auth";
-import { getUserRequest, getUserRefresh } from "../../services/actions/auth";
+import {
+  getUserRequest,
+  getUserRefresh,
+  getCookie,
+  clearNoLogIn,
+  loggedInInput,
+} from "../../services/actions/auth";
 
 function AppHeader() {
-  const { failedToRefresh, needToRefresh, logged, userInfo } = useSelector(
-    (state) => state.userInfo
-  );
+  const { needToRefresh, refreshed } = useSelector((state) => state.userInfo);
+  const { logged, userInfo } = useSelector((state) => state.userInfo);
   const location = useLocation();
-  const all = useSelector((state) => state.userInfo);
 
-useEffect(() => {
-  dispatch(getUserRequest())
-}, [])
-  
+  useEffect(() => {
+    if (needToRefresh) {
+      dispatch(getUserRefresh());
+    }
+  }, [needToRefresh]);
+
+  useEffect(() => {
+    if (refreshed) {
+      dispatch(getUserRequest(getCookie("accessToken")));
+    }
+  }, [refreshed]);
+
   const dispatch = useDispatch();
   useEffect(() => {
-    
-
     if (logged) {
       dispatch({
         type: "INPUT_PASSWORD_VALUE",
         value: "",
       });
+      dispatch({
+        type: "PROFILE_SELECTED",
+        value: true,
+      });
     }
     if (!logged) {
-      dispatch({
-        type: 'CLEAR_ERROR_PROFILE'
-      })
-      dispatch({
-        type: 'CLEAR_ERROR_FOGOT'
-      })
-      dispatch({
-        type: 'CLEAR_ERROR_REGISTRATION'
-      })
-      dispatch({
-        type: "INPUT_PASSWORD_VALUE",
-        value: "",
-      });
-      dispatch({
-        type: "INPUT_NAME_VALUE",
-        value: "",
-      });
-      dispatch({
-        type: "INPUT_EMAIL_VALUE",
-        value: "",
-      });
+      dispatch(clearNoLogIn());
     }
   }, [location.pathname]);
 
   useEffect(() => {
     if (logged) {
-      dispatch({
-        type: "INPUT_NAME_VALUE",
-        value: userInfo.user.name,
-      });
-      dispatch({
-        type: "INPUT_EMAIL_VALUE",
-        value: userInfo.user.email,
-      });
-      dispatch({
-        type: "INPUT_PASSWORD_VALUE",
-        value: "",
-      });
-      dispatch({
-        type: "USER_NEED_TO_REFRESH",
-        value: false,
-      });
+      dispatch(loggedInInput(userInfo));
     }
   }, [logged]);
 

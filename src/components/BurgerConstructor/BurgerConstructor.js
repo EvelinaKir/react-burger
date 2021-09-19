@@ -21,7 +21,7 @@ import {
   addCard,
 } from "../../services/actions/index";
 import { itemTypes } from "../../services/actions/index";
-import { useHistory } from 'react-router-dom';  
+import { useHistory } from "react-router-dom"; 
 function Buns() {
   const { mainIngredients, bun } = useSelector(
     (state) => state.constructorList
@@ -99,7 +99,7 @@ function Ingredient({ id, name, price, image, index, elemKey }) {
   );
   useEffect(() => {
     dispatch(count(mainIngredients, elemKey, totalCard, orderWasCreated));
-  }, [mainIngredients, bun, deleteCard, switchCard]);
+  }, [mainIngredients, bun, deleteCard, switchCard, addCard]);
 
   const ref = useRef(null);
 
@@ -209,9 +209,8 @@ function BurgerConstructor() {
         </div>
         <div
           className={bCStyles.basketButton}
-          onClick={() => logged ? dispatch(openModalOrder(infoToSend), cleanCounter(total)) : history.replace({pathname: '/login'})}
         >
-          <Button type="primary" size="medium">
+          <Button type="primary" size="medium" onClick={() => logged ? dispatch(openModalOrder(infoToSend), cleanCounter(total)) : history.replace({pathname: '/login'})}>
             Офоромить заказ
           </Button>
         </div>

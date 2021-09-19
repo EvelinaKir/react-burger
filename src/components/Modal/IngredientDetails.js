@@ -2,38 +2,45 @@ import modalStyles from "../Modal/ModalStyles.module.css";
 import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import {useSelector} from 'react-redux' 
-import {useHistory, useParams} from 'react-router-dom';
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
+function IngredientDetails({ header }) {
+  const { name } = useSelector((state) => state.currentIngredient);
+  const { id } = useParams();
+  const foodList = useSelector((state) => state.apiList.foodData);
+  const exact = foodList.find((elem) => elem._id === id);
+  const modal = useSelector((state) => state.modalInfo.ingridientModal);
 
-function IngredientDetails({header}) {
-const {name, image, calories, proteins, fat, carbohydrates} = useSelector(state => state.currentIngredient)
-const  {id} = useParams() 
-const foodList = useSelector(state => state.apiList.foodData)
-const exact = foodList.find(elem => elem._id === id)
-const modal = useSelector(state => state.modalInfo.ingridientModal)
-  
-    return (
-  <div className={modalStyles.ingredientContainer}> 
-
-{!modal && (<div className={classNames(
-              modalStyles.headerTextNoModal,
-              "text text_type_main-large mt-10"
-            )} >{header}</div>)}
-        <img className={modalStyles.image} src={exact.image_large} alt={exact.name}/>
-        <h3 className={classNames("text text_type_main-medium mb-8 mt-4")}>
-          {name}
-        </h3>
-        <div className={classNames(modalStyles.modalDetails)}>
-          <Detail type="Калории, ккал" content={exact.calories} />
-          <Detail type="Белки, г" content={exact.proteins} />
-          <Detail type="Жиры, г" content={exact.fat} />
-          <Detail type="Углеводы, г" content={exact.carbohydrates} />
+  return (
+    <div className={modalStyles.ingredientContainer}>
+      {!modal && (
+        <div
+          className={classNames(
+            modalStyles.headerTextNoModal,
+            "text text_type_main-large mt-10"
+          )}
+        >
+          {header}
         </div>
-</div>
-    );
-    }
-
+      )}
+      <img
+        className={modalStyles.image}
+        src={exact.image_large}
+        alt={exact.name}
+      />
+      <h3 className={classNames("text text_type_main-medium mb-8 mt-4")}>
+        {name}
+      </h3>
+      <div className={classNames(modalStyles.modalDetails)}>
+        <Detail type="Калории, ккал" content={exact.calories} />
+        <Detail type="Белки, г" content={exact.proteins} />
+        <Detail type="Жиры, г" content={exact.fat} />
+        <Detail type="Углеводы, г" content={exact.carbohydrates} />
+      </div>
+    </div>
+  );
+}
 
 function Detail({ type, content }) {
   return (
@@ -58,10 +65,12 @@ function Detail({ type, content }) {
   );
 }
 
-Detail.propTypes ={
+Detail.propTypes = {
   type: PropTypes.string,
-  content: PropTypes.number 
-}
+  content: PropTypes.number,
+};
 
+IngredientDetails.propTypes = {
+  header: PropTypes.string,
+};
 export default IngredientDetails;
-

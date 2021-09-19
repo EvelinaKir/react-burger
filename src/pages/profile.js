@@ -1,40 +1,41 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import profileStyles from "./profile.module.css";
 import classNames from "classnames";
 import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { getCookie, logOut, changeProfileInfo } from "../services/actions/auth";
+import { logOut, changeProfileInfo } from "../services/actions/auth";
 import { useHistory } from "react-router-dom";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import UnloggedProtectedRoute from "../components/ProtectedRoute/UnloggedProtectedRoute";
 import SuccessPrompt from "../components/SuccessPromt/SuccessPrompt";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  useRouteMatch,
-  useParams,
-} from "react-router-dom";
+import { Switch, useRouteMatch, useParams } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import PropTypes from "prop-types";
 
 function Profile() {
+  const profileText =
+  "В этом разделе вы можете изменить свои персональные данные";
+const orderListText =
+  "В этом разделе вы можете просмотреть свою историю заказов";
+const profileTab = useSelector((state) => state.profileTabChange.profileTab);
   const dispatch = useDispatch();
   const history = useHistory();
 
   const { path, url } = useRouteMatch();
 
   return (
-    <>
+    <Router>
       <div className={classNames(profileStyles.mainbox)}>
         <div className={classNames(profileStyles.navigation)}>
           <NavLink
             onClick={() => dispatch({ type: "PROFILE_SELECTED", value: true })}
             exact
-            to={{ pathname: "/profile" }}
+            to={{ pathname: `/profile` }}
             className={classNames(
               profileStyles.navOption,
               "text text_type_main-medium"
@@ -70,25 +71,28 @@ function Profile() {
           >
             Выход
           </button>
-          <Promt />
+          <Promt>{!profileTab ? orderListText  : profileText}</Promt>
         </div>
+
+
+
         <div className={profileStyles.detailed}>
           <Switch>
-            <UnloggedProtectedRoute path={"/profile"} exact={true}>
-              {<ProfileMain />}
+            <UnloggedProtectedRoute path={`/profile`} exact={true}>
+              <ProfileMain />
             </UnloggedProtectedRoute>
             <UnloggedProtectedRoute path={`/profile/orders`} exact={true}>
-              {<OrderHistory />}
+              <OrderHistory />
             </UnloggedProtectedRoute>
           </Switch>
         </div>
       </div>
-    </>
+    </Router>
   );
 }
 
 function ProfileMain() {
-  const [state, setstate] = useState(false);
+  const [state, setState] = useState(false);
   const dispatch = useDispatch();
   const { email, password, name } = useSelector((state) => state.inputValue);
   const { error, hasError } = useSelector((state) => state.userInfo);
@@ -110,8 +114,13 @@ function ProfileMain() {
         <Button
           onClick={() => {
             changeInfo();
-            if (!error) {
-              setstate(true);
+            if (!hasError) {
+              setState(true);
+              setTimeout(() => setState(false), 1000);
+              dispatch({
+                type: "INPUT_PASSWORD_VALUE",
+                value: "",
+              });
             }
           }}
         >
@@ -119,13 +128,12 @@ function ProfileMain() {
         </Button>
       )}
       {state && <SuccessPrompt />}
+      {hasError && <ErrorPrompt error={error} />}
     </>
   );
 }
 
 function OrderHistory() {
-  const orderHistoryId = useParams();
-  console.log(orderHistoryId);
   return (
     <div className={classNames(profileStyles.orderHistoryBox)}>
       <span>Here is your history</span>
@@ -133,13 +141,8 @@ function OrderHistory() {
   );
 }
 
-function Promt() {
-  const profileText =
-    "В этом разделе вы можете изменить свои персональные данные";
-  const orderListText =
-    "В этом разделе вы можете просмотреть свою историю заказов";
-  const profileTab = useSelector((state) => state.profileTabChange.profileTab);
-
+function Promt({children}) {
+ 
   return (
     <span
       className={classNames(
@@ -147,9 +150,13 @@ function Promt() {
         "text text_type_main-default text_color_inactive mr-15"
       )}
     >
-      {profileTab ? profileText : orderListText}
+      {children}
     </span>
   );
 }
+
+Promt.propTypes = {
+  children: PropTypes.string,
+};
 
 export default Profile;

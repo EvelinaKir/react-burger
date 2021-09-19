@@ -1,31 +1,24 @@
 import classNames from "classnames";
 import React from "react";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import resetStyles from "./resetPassword.module.css";
-import { EmailInput } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link, useHistory } from "react-router-dom";
-import {
-    PasswordInput,
-    Input,
-  } from "@ya.praktikum/react-developer-burger-ui-components";
-import {resetPassword} from '../services/actions/auth'
+import { resetPassword } from "../services/actions/auth";
 import { LetterCode } from "../components/Inputs/LetterCode";
-import {Password} from '../components/Inputs/Password'
-import ErrorPrompt from '../components/ErrorPrompt/ErrorPrompt'
-import { Route, Redirect } from 'react-router-dom';
+import { Password } from "../components/Inputs/Password";
+import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function ResetPassword() {
-  const dispatch = useDispatch()
-  const history = useHistory()
-  const  {hasError, error} = useSelector(state => state.forgotRequest)
-  const all = useSelector(state => state.forgotRequest)
-  console.log(all)
-  const {password, code} = useSelector(state => state.inputValue)
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { hasError, error } = useSelector((state) => state.forgotRequest);
+  const all = useSelector((state) => state.forgotRequest);
+  console.log(all);
+  const { password, code } = useSelector((state) => state.inputValue);
   const reset = () => {
-    dispatch(resetPassword(password, code, history))
-  }
+    dispatch(resetPassword(password, code, history));
+  };
 
   return (
     <div className={classNames(resetStyles.mainbox)}>
@@ -47,7 +40,7 @@ function ResetPassword() {
         <Button type="primary" size="medium" onClick={() => reset()}>
           Сохранить
         </Button>
-        {hasError && (<ErrorPrompt error={error}/>)}
+        {hasError && <ErrorPrompt error={error} />}
       </div>
       <div>
         <span
@@ -71,8 +64,5 @@ function ResetPassword() {
     </div>
   );
 }
-
-
-
 
 export default ResetPassword;

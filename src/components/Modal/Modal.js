@@ -6,28 +6,25 @@ import ModalOverlay from "../Modal/ModalOverlay";
 import ReactDom from "react-dom";
 import esc from "../../images/modalImages/modalEsc.svg";
 import { useEffect, useCallback } from "react";
-import {useDispatch, useSelector} from 'react-redux' 
+import { useDispatch, useSelector } from "react-redux";
 import { closeModal } from "../../services/actions";
-import {useHistory, useRouteMatch} from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 const modalRoot = document.getElementById("modal-portal");
 
-function Modal({children, header}) {
-  const history = useHistory()
+function Modal({ children, header }) {
+  const history = useHistory();
   const closeIngredient = () => {
-    dispatch(closeModal())
-    history.replace({pathname: '/'})
-}
-const dispatch = useDispatch();
-const {allClose} = useSelector(state => state.modalInfo)
-  const escapeClosed = useCallback(
-    (e) => {
-      if (e.key === "Escape") {
-         closeIngredient()
-      }
-    },
-    []
-  );
+    dispatch(closeModal());
+    history.replace({ pathname: "/" });
+  };
+  const dispatch = useDispatch();
+  const { allClose } = useSelector((state) => state.modalInfo);
+  const escapeClosed = useCallback((e) => {
+    if (e.key === "Escape") {
+      closeIngredient();
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", escapeClosed);
@@ -36,9 +33,9 @@ const {allClose} = useSelector(state => state.modalInfo)
     };
   }, []);
 
-if (allClose) {
-  return null
-}
+  if (allClose) {
+    return null;
+  }
 
   return ReactDom.createPortal(
     <>
@@ -65,8 +62,6 @@ if (allClose) {
     </>,
     modalRoot
   );
-
-
 }
 
 Modal.propTypes = {
@@ -75,4 +70,3 @@ Modal.propTypes = {
 };
 
 export default Modal;
-

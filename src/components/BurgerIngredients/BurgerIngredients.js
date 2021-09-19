@@ -1,16 +1,15 @@
 import React from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
-import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+
 import bIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { currentIngredient } from "../../services/actions/index";
+
 import { useRef, useEffect } from "react";
 import { switchTab } from "../../services/actions";
-import {useDrag} from 'react-dnd';
-import { itemTypes } from "../../services/actions/index";
-import Card from './Card'
+
+import Card from "./Card";
 
 function MainTab() {
   const dispatch = useDispatch();
@@ -58,18 +57,21 @@ function Cards({ type }) {
       {info.map((elem, i) => {
         if (elem.type === type) {
           return (
-            <Card id={elem._id} image={elem.image} price={elem.price} name={elem.name} index={i} elem={elem} key={elem._id} />
+            <Card
+              id={elem._id}
+              image={elem.image}
+              price={elem.price}
+              name={elem.name}
+              index={i}
+              elem={elem}
+              key={elem._id}
+            />
           );
         }
       })}
     </div>
   );
 }
-
-
-
-
-
 
 function BurgerIngredientsSection({ sectionName, textContent, cardType }) {
   return (
@@ -114,12 +116,12 @@ function BurgerIngredients() {
     }
     return () => {
       if (scrollRef && scrollRef.current) {
-      scrollRef.current.removeEventListener("scroll", (e) => {
-        ingredientsScroll(e);
-      });
-    }
+        scrollRef.current.removeEventListener("scroll", (e) => {
+          ingredientsScroll(e);
+        });
+      }
     };
-  },[]);
+  }, []);
 
   return (
     <section className={classNames(bIStyles.burgerIngredients, "mr-10")}>

@@ -63,6 +63,8 @@ const initialUserProfile = {
   profileReady: false,
   loadingUser: false,
   loadingRefresh: false,
+  refreshed: false,
+  changeIsLoading: false,
 };
 
 const initialForgotRequest = {
@@ -71,6 +73,7 @@ const initialForgotRequest = {
   isLoading: false,
   sent: false,
   result: null,
+  sending: false,
 };
 
 const initialProfile = {
@@ -102,11 +105,11 @@ export const userRegistrationInfo = (state = initialRegistation, action) => {
       };
     }
     case CLEAR_ERROR_REGISTRATION: {
-      return{
+      return {
         ...state,
         hasError: false,
-        error: null
-      }
+        error: null,
+      };
     }
     default: {
       return state;
@@ -129,6 +132,7 @@ export const userInfo = (state = initialUserProfile, action) => {
         hasError: false,
         logged: true,
         isLoading: false,
+        profileReady: true,
       };
     }
     case USER_LOG_IN_FAILED: {
@@ -176,6 +180,7 @@ export const userInfo = (state = initialUserProfile, action) => {
     case GET_USER_SUCCESS: {
       return {
         ...state,
+        profileReady: true,
         userInfo: action.value,
         hasError: false,
         logged: true,
@@ -205,11 +210,13 @@ export const userInfo = (state = initialUserProfile, action) => {
         ...state,
         isLoading: true,
         loadingRefresh: true,
+        refreshed: false,
       };
     }
     case GET_USER_REFRESH_SUCCESS: {
       return {
         ...state,
+        refreshed: true,
         refreshedTokens: action.value,
         needToRefresh: false,
         hasError: false,
@@ -220,6 +227,7 @@ export const userInfo = (state = initialUserProfile, action) => {
     case GET_USER_REFRESH_FAILED: {
       return {
         ...state,
+        refreshed: false,
         isLoading: false,
         failedToRefresh: true,
         loadingRefresh: false,
@@ -231,21 +239,21 @@ export const userInfo = (state = initialUserProfile, action) => {
     case USER_PROFILE_CHANGE_REQUEST: {
       return {
         ...state,
-        isLoading: true,
+        changeIsLoading: true,
       };
     }
     case USER_PROFILE_CHANGE_SUCCESS: {
       return {
         ...state,
         userInfo: action.value,
-        isLoading: false,
+        changeIsLoading: false,
         hasError: false,
       };
     }
     case USER_PROFILE_CHANGE_FAILED: {
       return {
         ...state,
-        isLoading: false,
+        changeIsLoading: false,
         hasError: true,
         error: action.error,
       };
@@ -257,11 +265,11 @@ export const userInfo = (state = initialUserProfile, action) => {
       };
     }
     case CLEAR_ERROR_PROFILE: {
-      return{
+      return {
         ...state,
         error: null,
-        hasError: false
-      }
+        hasError: false,
+      };
     }
     default: {
       return state;
@@ -316,14 +324,16 @@ export const forgotRequest = (state = initialForgotRequest, action) => {
       return {
         ...state,
         isLoading: true,
+        sending: true,
       };
     }
     case USER_FORGOT_SUCCESS: {
       return {
         ...state,
+        sending: false,
         sent: true,
-        hasError: false,
         isLoading: false,
+        hasError: false,
         result: action.value,
       };
     }
@@ -331,6 +341,7 @@ export const forgotRequest = (state = initialForgotRequest, action) => {
       return {
         ...state,
         sent: false,
+        sending: false,
         hasError: true,
         error: action.value,
         isLoading: false,
@@ -361,12 +372,12 @@ export const forgotRequest = (state = initialForgotRequest, action) => {
       };
     }
     case CLEAR_ERROR_FOGOT: {
-      return{
+      return {
         ...state,
         hasError: false,
         error: null,
-        sent: false
-      }
+        sent: false,
+      };
     }
     default: {
       return state;

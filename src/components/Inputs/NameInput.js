@@ -1,10 +1,10 @@
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
+import PropTypes from "prop-types";
 
-export function NameInput({icon}){
-    const value = useSelector((state) => state.inputValue.name);
-    
+export function NameInput({ icon }) {
+  const value = useSelector((state) => state.inputValue.name);
 
   const dispatch = useDispatch();
   const onChange = (e) => {
@@ -13,17 +13,21 @@ export function NameInput({icon}){
       value: e.target.value,
     });
   };
-      return (
-        <Input
-        icon={icon}
-        type={'text'}
-        placeholder={'Имя'}
-        onChange={onChange}
-        value={value}
-        name={'name'}
-        error={false}
-        errorText={'Ошибка'}
-        size={'default'}
-      />
-      )
-  }
+  return (
+    <Input
+      icon={icon}
+      type={"text"}
+      placeholder={"Имя"}
+      onChange={onChange}
+      value={value}
+      name={"name"}
+      error={false}
+      errorText={"Ошибка"}
+      size={"default"}
+    />
+  );
+}
+
+NameInput.propTypes = {
+  icon: PropTypes.string,
+};
