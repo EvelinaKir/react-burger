@@ -20,10 +20,7 @@ function Register() {
   const dispatch = useDispatch();
   const value = useSelector((state) => state.inputValue);
   const registration = () => {
-    dispatch(newUserRegistration(value));
-    if (!hasError) {
-      history.replace({ pathname: "/login" });
-    }
+    dispatch(newUserRegistration(value, history));
   };
   return (
     <div className={classNames(registerStyles.mainbox)}>

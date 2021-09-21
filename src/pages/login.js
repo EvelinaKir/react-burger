@@ -39,7 +39,7 @@ function Login() {
         >
           Войти
         </Button>
-        {hasError && console.log(error) && <ErrorPrompt error={error} />}
+        {hasError && <ErrorPrompt error={error} />}
       </div>
       <div className={classNames(loginStyles.text)}>
         <span className={"text text_type_main-default text_color_inactive"}>

@@ -130,16 +130,7 @@ function ProfileMain() {
           <Button
             size={dontMatch  ? "small" : "medium"}
             onClick={() => {
-              console.log(all);
               changeInfo();
-              // if (!hasError) {
-              //   setState(true);
-              //   setTimeout(() => setState(false), 1000);
-              //   dispatch({
-              //     type: "INPUT_PASSWORD_VALUE",
-              //     value: "",
-              //   });
-              // }
             }}
           >
             Сохранить

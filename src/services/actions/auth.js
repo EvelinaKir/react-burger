@@ -47,7 +47,7 @@ export const CLEAR_ERROR_FOGOT = "CLEAR_ERROR_FOGOT";
 
 export const CLEAR_ERROR_REGISTRATION = "CLEAR_ERROR_REGISTRATION";
 
-export function newUserRegistration(info) {
+export function newUserRegistration(info, history) {
   const { name, email, password } = info;
   return function (dispatch) {
     const requestOption = {
@@ -73,16 +73,14 @@ export function newUserRegistration(info) {
             type: USER_SIGN_UP_SUCCESS,
             value: last,
           });
+          history.replace({ pathname: "/login" });
         }  if (!res.ok) {
-          dispatch({
-            type: USER_SIGN_UP_FAILED,
-            value: res.status,
-          });
+          throw new Error(res.status);
         }
       } catch (error) {
         dispatch({
           type: USER_SIGN_UP_FAILED,
-          value: error,
+          value: error.status,
         });
       }
     })();
