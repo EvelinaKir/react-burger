@@ -73,7 +73,7 @@ export function newUserRegistration(info) {
             type: USER_SIGN_UP_SUCCESS,
             value: last,
           });
-        } else {
+        }  if (!res.ok) {
           dispatch({
             type: USER_SIGN_UP_FAILED,
             value: res.status,
@@ -123,7 +123,7 @@ export function userLogin(info) {
             type: INPUT_NAME_VALUE,
             value: last.user.name,
           });
-        } else {
+        }  if (!res.ok) {
           dispatch({
             type: USER_LOG_IN_FAILED,
             value: res.status,
@@ -164,7 +164,7 @@ export function sendForgotRequest(info, history) {
             type: USER_FORGOT_SUCCESS,
             value: last,
           });
-        } else {
+        }  if (!res.ok) {
           dispatch({
             type: USER_FORGOT_FAILED,
             value: res.status,
@@ -231,12 +231,11 @@ export function getUserRequest() {
         dispatch({
           type: GET_USER_REQUEST,
         });
-        console.log(request);
+
         const res = await fetch(url, request);
-        console.log(request);
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
+        const result = await res.json();
+        const last = await result;
+         if (res.ok) {
           dispatch({
             type: GET_USER_SUCCESS,
             value: last,
@@ -250,7 +249,10 @@ export function getUserRequest() {
             value: true,
           });
         }
-        if (res.status === 403) {
+        if (!res.ok) {
+          throw new Error(last.message);
+        }
+      } catch (error) {
           dispatch({
             type: USER_NEED_TO_REFRESH,
             value: true,
@@ -261,27 +263,21 @@ export function getUserRequest() {
           });
           dispatch({
             type: GET_USER_FAILED,
-            error: res.status,
+            errorMessage: error.message,
           });
-        }
-      } catch (error) {
-        dispatch({
-          type: GET_USER_FAILED,
-          error: `Ошибка! ${error.message}`,
-        });
       }
     })();
   };
 }
 
-export function getUserRefresh() {
+export function getUserRefresh(token) {
   const url = "https://norma.nomoreparties.space/api/auth/token";
   return function (dispatch) {
     const requestOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token: getCookie("refreshToken"),
+        token: token,
       }),
     };
     (async () => {
@@ -290,36 +286,34 @@ export function getUserRefresh() {
           type: GET_USER_REFRESH_REQUEST,
         });
         const res = await fetch(url, requestOption);
+        const result = await res.json();
+        const last = await result;
         if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          console.log(last);
           dispatch({
             type: GET_USER_REFRESH_SUCCESS,
             value: last,
           });
           document.cookie = `accessToken=${
             last.accessToken.split("Bearer ")[1]
-          }; path='/'`;
-          document.cookie = `refreshToken=${last.refreshToken}; path='/'`;
+          }; path=/`;
+          document.cookie = `refreshToken=${last.refreshToken}; path=/`;
           dispatch({
             type: PROFILE_IS_READY,
             value: true,
           });
-        } else {
-          dispatch({
-            type: GET_USER_REFRESH_FAILED,
-            error: res.status,
-          });
-          dispatch({
-            type: PROFILE_IS_READY,
-            value: false,
-          });
+         
+        }
+        if (!res.ok) {
+          throw new Error(last.message);
         }
       } catch (error) {
         dispatch({
           type: GET_USER_REFRESH_FAILED,
-          error: `Ошибка! ${error.message}`,
+          errorMessage: error.message,
+        });
+        dispatch({
+          type: PROFILE_IS_READY,
+          value: false,
         });
       }
     })();
@@ -357,16 +351,13 @@ export function logOut(history) {
             type: INPUT_CLEAN_VALUE,
           });
           history.replace({ pathname: "/login" });
-        } else {
-          dispatch({
-            type: USER_LOG_OUT_FAILED,
-            error: res.status,
-          });
+        }  if (!res.ok) {
+          throw new Error(res.status);
         }
       } catch (error) {
         dispatch({
           type: USER_LOG_OUT_FAILED,
-          error: `Ошибка! ${error.message}`,
+          error: error.message,
         });
       }
     })();
@@ -394,28 +385,29 @@ export function changeProfileInfo({ email, password, name }) {
           type: USER_PROFILE_CHANGE_REQUEST,
         });
         const res = await fetch(url, requestOption);
+        const result = await res.json();
+        const last = await result;
         if (res.ok) {
-          const result = await res.json();
-          const last = await result;
           dispatch({
             type: USER_PROFILE_CHANGE_SUCCESS,
             value: last,
           });
-        } else {
-          dispatch({
-            type: USER_PROFILE_CHANGE_FAILED,
-            value: res.status,
-          });
+        }
+        if (!res.ok) {
+              throw new Error(last.message);
         }
       } catch (error) {
         dispatch({
           type: USER_PROFILE_CHANGE_FAILED,
-          value: error,
+          value: error.message,
+          error: error.message
         });
+        
       }
     })();
   };
 }
+
 
 export function resetPassword({ password, token, history }) {
   const url = " https://norma.nomoreparties.space/api/password-reset/reset";
@@ -445,16 +437,13 @@ export function resetPassword({ password, token, history }) {
             value: last,
           });
           history.replace({ pathname: "/" });
-        } else {
-          dispatch({
-            type: USER_RESET_FAILED,
-            error: res.status,
-          });
+        } if (!res.ok){
+          throw new Error(res.status);
         }
       } catch (error) {
         dispatch({
           type: USER_RESET_FAILED,
-          value: error,
+          value: error.status,
         });
       }
     })();

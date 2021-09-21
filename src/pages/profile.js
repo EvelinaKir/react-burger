@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import profileStyles from "./profile.module.css";
@@ -7,11 +7,10 @@ import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
 import { NavLink } from "react-router-dom";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { logOut, changeProfileInfo } from "../services/actions/auth";
+import { logOut, changeProfileInfo, getCookie, getUserRefresh } from "../services/actions/auth";
 import { useHistory } from "react-router-dom";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import UnloggedProtectedRoute from "../components/ProtectedRoute/UnloggedProtectedRoute";
-import SuccessPrompt from "../components/SuccessPromt/SuccessPrompt";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 import { Switch, useRouteMatch, useParams } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -19,10 +18,10 @@ import PropTypes from "prop-types";
 
 function Profile() {
   const profileText =
-  "В этом разделе вы можете изменить свои персональные данные";
-const orderListText =
-  "В этом разделе вы можете просмотреть свою историю заказов";
-const profileTab = useSelector((state) => state.profileTabChange.profileTab);
+    "В этом разделе вы можете изменить свои персональные данные";
+  const orderListText =
+    "В этом разделе вы можете просмотреть свою историю заказов";
+  const profileTab = useSelector((state) => state.profileTabChange.profileTab);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -71,17 +70,15 @@ const profileTab = useSelector((state) => state.profileTabChange.profileTab);
           >
             Выход
           </button>
-          <Promt>{!profileTab ? orderListText  : profileText}</Promt>
+          <Promt>{!profileTab ? orderListText : profileText}</Promt>
         </div>
-
-
 
         <div className={profileStyles.detailed}>
           <Switch>
-            <UnloggedProtectedRoute exact path={`/profile`} >
+            <UnloggedProtectedRoute exact path={`/profile`}>
               <ProfileMain />
             </UnloggedProtectedRoute>
-            <UnloggedProtectedRoute path={`/profile/orders`} >
+            <UnloggedProtectedRoute path={`/profile/orders`}>
               <OrderHistory />
             </UnloggedProtectedRoute>
           </Switch>
@@ -92,13 +89,31 @@ const profileTab = useSelector((state) => state.profileTabChange.profileTab);
 }
 
 function ProfileMain() {
-  const [state, setState] = useState(false);
+  // const [state, setState] = useState(false);
+  const all = useSelector((state) => state);
   const dispatch = useDispatch();
   const { email, password, name } = useSelector((state) => state.inputValue);
-  const { error, hasError } = useSelector((state) => state.userInfo);
+  const { error, hasError, userInfo, refreshed, failedToChange } = useSelector((state) => state.userInfo);
+  console.log(userInfo);
   const changeInfo = () => {
     dispatch(changeProfileInfo(email, password, name));
   };
+
+  useEffect(() => {
+   if (error === 'invalid token'){
+    dispatch(getUserRefresh(getCookie("refreshToken")))
+   }
+  }, [error])
+
+
+  useEffect(() => {
+   if (refreshed && failedToChange){
+    dispatch(changeProfileInfo(email, password, name));
+   }
+  }, [refreshed, failedToChange])
+  const dontMatch = userInfo.user.email != email || userInfo.user.name != name;
+
+
   return (
     <>
       <div className={classNames(profileStyles.input, "mb-6")}>
@@ -110,24 +125,49 @@ function ProfileMain() {
       <div className={classNames(profileStyles.input, "mb-6")}>
         <Password />
       </div>
-      {password.length > 0 && (
-        <Button
-          onClick={() => {
-            changeInfo();
-            if (!hasError) {
-              setState(true);
-              setTimeout(() => setState(false), 1000);
+      <div className={profileStyles.button}>
+        {password.length > 0 && (
+          <Button
+            size={dontMatch  ? "small" : "medium"}
+            onClick={() => {
+              console.log(all);
+              changeInfo();
+              // if (!hasError) {
+              //   setState(true);
+              //   setTimeout(() => setState(false), 1000);
+              //   dispatch({
+              //     type: "INPUT_PASSWORD_VALUE",
+              //     value: "",
+              //   });
+              // }
+            }}
+          >
+            Сохранить
+          </Button>
+        )}
+        {dontMatch && (
+          <Button
+            size={password.length > 0 ? "small" : "medium"}
+            onClick={() => (
+              dispatch({
+                type: "INPUT_EMAIL_VALUE",
+                value: userInfo.user.email,
+              }),
+              dispatch({
+                type: "INPUT_NAME_VALUE",
+                value: userInfo.user.name,
+              }),
               dispatch({
                 type: "INPUT_PASSWORD_VALUE",
                 value: "",
-              });
-            }
-          }}
-        >
-          Сохранить
-        </Button>
-      )}
-      {state && <SuccessPrompt />}
+              })
+            )}
+          >
+            Отмена
+          </Button>
+        )}
+      </div>
+    
       {hasError && <ErrorPrompt error={error} />}
     </>
   );
@@ -141,8 +181,7 @@ function OrderHistory() {
   );
 }
 
-function Promt({children}) {
- 
+function Promt({ children }) {
   return (
     <span
       className={classNames(

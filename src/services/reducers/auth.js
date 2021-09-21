@@ -65,6 +65,8 @@ const initialUserProfile = {
   loadingRefresh: false,
   refreshed: false,
   changeIsLoading: false,
+  errorMessage: null,
+  failedToChange: false,
 };
 
 const initialForgotRequest = {
@@ -133,6 +135,7 @@ export const userInfo = (state = initialUserProfile, action) => {
         logged: true,
         isLoading: false,
         profileReady: true,
+        errorMessage: null,
       };
     }
     case USER_LOG_IN_FAILED: {
@@ -186,6 +189,7 @@ export const userInfo = (state = initialUserProfile, action) => {
         logged: true,
         isLoading: false,
         loadingUser: false,
+        errorMessage: null
       };
     }
     case GET_USER_FAILED: {
@@ -196,6 +200,7 @@ export const userInfo = (state = initialUserProfile, action) => {
         error: action.error,
         hasError: true,
         loadingUser: false,
+        errorMessage: action.errorMessage,
       };
     }
     case USER_NEED_TO_REFRESH: {
@@ -222,6 +227,8 @@ export const userInfo = (state = initialUserProfile, action) => {
         hasError: false,
         isLoading: false,
         loadingRefresh: false,
+        errorMessage: null,
+        error: null
       };
     }
     case GET_USER_REFRESH_FAILED: {
@@ -248,6 +255,9 @@ export const userInfo = (state = initialUserProfile, action) => {
         userInfo: action.value,
         changeIsLoading: false,
         hasError: false,
+        errorMessage: null,
+        error: null,
+        failedToChange: false,
       };
     }
     case USER_PROFILE_CHANGE_FAILED: {
@@ -256,6 +266,8 @@ export const userInfo = (state = initialUserProfile, action) => {
         changeIsLoading: false,
         hasError: true,
         error: action.error,
+        errorMessage: action.errorMessage,
+        failedToChange: true,
       };
     }
     case PROFILE_IS_READY: {

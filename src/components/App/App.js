@@ -26,16 +26,20 @@ import Spiner from "../Spiner/Spiner";
 function App() {
   const dispatch = useDispatch();
   const url = "https://norma.nomoreparties.space/api/ingredients";
-  const { hasError, error, isLoading, foodData } = useSelector(
+  const { hasError, error, isLoading, foodData} = useSelector(
     (state) => state.apiList
   );
-  const { ingridientModal, orderModal, orderModalError } = useSelector(
+  const { ingridientModal } = useSelector(
     (state) => state.modalInfo
   );
+  
   useEffect(() => {
     dispatch(getIngredientsApi(url));
-    if (getCookie("accessToken")) dispatch(getUserRequest());
+    if (getCookie("accessToken")) {dispatch(getUserRequest())};
   }, []);
+
+
+
 
   return (
     <div className={appStyles.App}>

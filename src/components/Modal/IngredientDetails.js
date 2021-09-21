@@ -30,7 +30,7 @@ function IngredientDetails({ header }) {
         alt={exact.name}
       />
       <h3 className={classNames("text text_type_main-medium mb-8 mt-4")}>
-        {name}
+        {exact.name}
       </h3>
       <div className={classNames(modalStyles.modalDetails)}>
         <Detail type="Калории, ккал" content={exact.calories} />

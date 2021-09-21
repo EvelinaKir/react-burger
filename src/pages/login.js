@@ -10,10 +10,10 @@ import { userLogin } from "../services/actions/auth";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function Login() {
-  const { error, hasError } = useSelector((state) => state.userInfo);
-  console.log(error);
+  const { error, hasError, logged } = useSelector((state) => state.userInfo);
   const dispatch = useDispatch();
   const value = useSelector((state) => state.inputValue);
+
   return (
     <div className={classNames(loginStyles.mainbox)}>
       <span
@@ -39,7 +39,7 @@ function Login() {
         >
           Войти
         </Button>
-        {hasError && <ErrorPrompt error={error} />}
+        {hasError && console.log(error) && <ErrorPrompt error={error} />}
       </div>
       <div className={classNames(loginStyles.text)}>
         <span className={"text text_type_main-default text_color_inactive"}>

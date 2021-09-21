@@ -51,3 +51,9 @@ justify-items: center;
 .detailed{
     margin-right: auto;
 }
+.button{
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}

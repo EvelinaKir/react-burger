@@ -14,7 +14,7 @@ function UnloggedProtectedRoute({ children, ...rest }) {
       {!isLoading && !loadingUser && !loadingRefresh && (
         <Route
           {...rest}
-          render={() => (logged ? children : <Redirect to={"/login"} />)}
+          render={({location}) => (logged ? children : <Redirect to={{pathname: '/login', state: {from: location}}} />)}
         />
       )}
     </>

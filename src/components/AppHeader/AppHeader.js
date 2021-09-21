@@ -18,21 +18,26 @@ import {
 } from "../../services/actions/auth";
 
 function AppHeader() {
-  const { needToRefresh, refreshed } = useSelector((state) => state.userInfo);
-  const { logged, userInfo } = useSelector((state) => state.userInfo);
+
+  const { refreshed, logged, userInfo, error, needToRefresh, failedToChange } = useSelector((state) => state.userInfo);
+  const all = useSelector((state) => state.userInfo);
   const location = useLocation();
+  const errorMessage = useSelector(state => state.userInfo.errorMessage)
 
   useEffect(() => {
-    if (needToRefresh) {
-      dispatch(getUserRefresh());
+    if (errorMessage && needToRefresh){
+     dispatch(getUserRefresh(getCookie("refreshToken")))
     }
-  }, [needToRefresh]);
+   }, [errorMessage, needToRefresh])
 
   useEffect(() => {
-    if (refreshed) {
+    if (refreshed && !failedToChange) {
       dispatch(getUserRequest(getCookie("accessToken")));
     }
   }, [refreshed]);
+
+  
+
 
   const dispatch = useDispatch();
   useEffect(() => {
