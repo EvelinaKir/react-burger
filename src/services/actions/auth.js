@@ -346,12 +346,13 @@ export function logOut(history) {
         if (res.ok) {
           const result = await res.json();
           const last = await result;
+          document.cookie = `accessToken=${getCookie('accessToken')}; path=/; expires=` + new Date(-1).toUTCString();
+          document.cookie = `refreshToken=${getCookie('refreshToken')}; path=/; expires=` + new Date(-1).toUTCString();
           dispatch({
             type: USER_LOG_OUT_SUCCESS,
             value: last,
           });
-          setCookie("accessToken", null, { expires: -1 });
-          setCookie("refreshToken", null, { expires: -1 });
+          
           dispatch({
             type: INPUT_CLEAN_VALUE,
           });

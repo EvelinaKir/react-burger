@@ -46,7 +46,6 @@ function App() {
           <AppHeader />
           <Switch>
             <Route path="/" component={MainPage} exact={!ingridientModal} />
-
             <LoggedProtectedRoute path="/login" exact={true}>
               <Login />
             </LoggedProtectedRoute>
