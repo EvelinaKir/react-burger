@@ -10,33 +10,15 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getUserRequest,
-  getUserRefresh,
-  getCookie,
   clearNoLogIn,
   loggedInInput,
 } from "../../services/actions/auth";
 
 function AppHeader() {
+  const {  logged, userInfo } =
+    useSelector((state) => state.userInfo);
 
-  const { refreshed, logged, userInfo, error, needToRefresh, failedToChange } = useSelector((state) => state.userInfo);
-  const all = useSelector((state) => state.userInfo);
   const location = useLocation();
-  const errorMessage = useSelector(state => state.userInfo.errorMessage)
-
-  useEffect(() => {
-    if (errorMessage && needToRefresh){
-     dispatch(getUserRefresh(getCookie("refreshToken")))
-    }
-   }, [errorMessage, needToRefresh])
-
-  useEffect(() => {
-    if (refreshed && !failedToChange) {
-      dispatch(getUserRequest(getCookie("accessToken")));
-    }
-  }, [refreshed]);
-
-  
 
 
   const dispatch = useDispatch();

@@ -15,7 +15,7 @@ function Register() {
   const { hasError, error, regInfo } = useSelector(
     (state) => state.registration
   );
-  console.log(regInfo);
+
   const history = useHistory();
   const dispatch = useDispatch();
   const value = useSelector((state) => state.inputValue);

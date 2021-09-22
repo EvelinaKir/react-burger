@@ -9,7 +9,7 @@ export function LoginInput({ icon, placeholder }) {
 
   const dispatch = useDispatch();
   const onChange = (e) => {
-    console.log(all);
+
     dispatch({
       type: "INPUT_EMAIL_VALUE",
       value: e.target.value,

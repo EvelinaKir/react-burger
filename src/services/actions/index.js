@@ -1,4 +1,4 @@
-import { getCookie } from "./auth";
+import { getCookie, getUserRefresh } from "./auth";
 export const GET_INGREDIENTS_API_REQUEST = "GET_INGREDIENTS_API_REQUEST";
 export const GET_INGREDIENTS_API_SUCCESS = "GET_INGREDIENTS_API_SUCCESS";
 export const GET_INGREDIENTS_API_FAILED = "GET_INGREDIENTS_API_FAILED";
@@ -33,7 +33,6 @@ export function getIngredientsApi(url) {
         credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + getCookie('token')
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer'
@@ -121,7 +120,7 @@ export function sendOrder(data) {
           type: SEND_ORDER_SUCCESS,
           data: last,
         });
-        console.log(last)
+ 
       }} catch(error) {
         dispatch({
           type: SEND_ORDER_FAILED,

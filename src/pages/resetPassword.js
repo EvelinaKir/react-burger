@@ -14,7 +14,6 @@ function ResetPassword() {
   const history = useHistory();
   const { hasError, error } = useSelector((state) => state.forgotRequest);
   const all = useSelector((state) => state.forgotRequest);
-  console.log(all);
   const { password, code } = useSelector((state) => state.inputValue);
   const reset = () => {
     dispatch(resetPassword(password, code, history));

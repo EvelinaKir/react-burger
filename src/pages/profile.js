@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import profileStyles from "./profile.module.css";
 import classNames from "classnames";
@@ -7,12 +6,12 @@ import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
 import { NavLink } from "react-router-dom";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { logOut, changeProfileInfo, getCookie, getUserRefresh } from "../services/actions/auth";
+import { logOut, changeProfileInfo } from "../services/actions/auth";
 import { useHistory } from "react-router-dom";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import UnloggedProtectedRoute from "../components/ProtectedRoute/UnloggedProtectedRoute";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
-import { Switch, useRouteMatch, useParams } from "react-router-dom";
+import { Switch, useRouteMatch } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -89,30 +88,15 @@ function Profile() {
 }
 
 function ProfileMain() {
-  // const [state, setState] = useState(false);
   const all = useSelector((state) => state);
   const dispatch = useDispatch();
   const { email, password, name } = useSelector((state) => state.inputValue);
-  const { error, hasError, userInfo, refreshed, failedToChange } = useSelector((state) => state.userInfo);
-  console.log(userInfo);
+  const { error, hasError, userInfo } = useSelector((state) => state.userInfo);
   const changeInfo = () => {
     dispatch(changeProfileInfo(email, password, name));
   };
 
-  useEffect(() => {
-   if (error === 'invalid token'){
-    dispatch(getUserRefresh(getCookie("refreshToken")))
-   }
-  }, [error])
-
-
-  useEffect(() => {
-   if (refreshed && failedToChange){
-    dispatch(changeProfileInfo(email, password, name));
-   }
-  }, [refreshed, failedToChange])
   const dontMatch = userInfo.user.email != email || userInfo.user.name != name;
-
 
   return (
     <>
@@ -128,7 +112,7 @@ function ProfileMain() {
       <div className={profileStyles.button}>
         {password.length > 0 && (
           <Button
-            size={dontMatch  ? "small" : "medium"}
+            size={dontMatch ? "small" : "medium"}
             onClick={() => {
               changeInfo();
             }}
@@ -158,7 +142,7 @@ function ProfileMain() {
           </Button>
         )}
       </div>
-    
+
       {hasError && <ErrorPrompt error={error} />}
     </>
   );

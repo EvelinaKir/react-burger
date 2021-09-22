@@ -74,7 +74,8 @@ export function newUserRegistration(info, history) {
             value: last,
           });
           history.replace({ pathname: "/login" });
-        }  if (!res.ok) {
+        }
+        if (!res.ok) {
           throw new Error(res.status);
         }
       } catch (error) {
@@ -121,7 +122,8 @@ export function userLogin(info) {
             type: INPUT_NAME_VALUE,
             value: last.user.name,
           });
-        }  if (!res.ok) {
+        }
+        if (!res.ok) {
           dispatch({
             type: USER_LOG_IN_FAILED,
             value: res.status,
@@ -138,13 +140,12 @@ export function userLogin(info) {
 }
 
 export function sendForgotRequest(info, history) {
-  const { email } = info;
   return function (dispatch) {
     const requestOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: email,
+        email: info,
       }),
     };
 
@@ -162,7 +163,8 @@ export function sendForgotRequest(info, history) {
             type: USER_FORGOT_SUCCESS,
             value: last,
           });
-        }  if (!res.ok) {
+        }
+        if (!res.ok) {
           dispatch({
             type: USER_FORGOT_FAILED,
             value: res.status,
@@ -215,7 +217,7 @@ export function getCookie(name) {
 
 export function getUserRequest() {
   const url = "https://norma.nomoreparties.space/api/auth/user";
-  return function (dispatch) {
+  return async function (dispatch) {
     const request = {
       method: "GET",
       headers: {
@@ -233,7 +235,7 @@ export function getUserRequest() {
         const res = await fetch(url, request);
         const result = await res.json();
         const last = await result;
-         if (res.ok) {
+        if (res.ok) {
           dispatch({
             type: GET_USER_SUCCESS,
             value: last,
@@ -248,29 +250,34 @@ export function getUserRequest() {
           });
         }
         if (!res.ok) {
+          if (last.message === "jwt expired") {
+            dispatch(
+              getUserRefresh(getCookie("refreshToken"),getUserRequest()),
+            );
+          }
           throw new Error(last.message);
         }
       } catch (error) {
-          dispatch({
-            type: USER_NEED_TO_REFRESH,
-            value: true,
-          });
-          dispatch({
-            type: PROFILE_IS_READY,
-            value: false,
-          });
-          dispatch({
-            type: GET_USER_FAILED,
-            errorMessage: error.message,
-          });
+        dispatch({
+          type: USER_NEED_TO_REFRESH,
+          value: true,
+        });
+        dispatch({
+          type: PROFILE_IS_READY,
+          value: false,
+        });
+        dispatch({
+          type: GET_USER_FAILED,
+          errorMessage: error.message,
+        });
       }
     })();
   };
 }
 
-export function getUserRefresh(token) {
+export function getUserRefresh(token, sendDataAgain) {
   const url = "https://norma.nomoreparties.space/api/auth/token";
-  return function (dispatch) {
+  return async function (dispatch) {
     const requestOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -299,7 +306,7 @@ export function getUserRefresh(token) {
             type: PROFILE_IS_READY,
             value: true,
           });
-         
+          if (sendDataAgain) dispatch(sendDataAgain);
         }
         if (!res.ok) {
           throw new Error(last.message);
@@ -349,7 +356,8 @@ export function logOut(history) {
             type: INPUT_CLEAN_VALUE,
           });
           history.replace({ pathname: "/login" });
-        }  if (!res.ok) {
+        }
+        if (!res.ok) {
           throw new Error(res.status);
         }
       } catch (error) {
@@ -362,9 +370,9 @@ export function logOut(history) {
   };
 }
 
-export function changeProfileInfo({ email, password, name }) {
+export function changeProfileInfo(email, password, name) {
   const url = "https://norma.nomoreparties.space/api/auth/user";
-  return function (dispatch) {
+  return async function (dispatch) {
     const requestOption = {
       method: "PATCH",
       headers: {
@@ -377,44 +385,49 @@ export function changeProfileInfo({ email, password, name }) {
         name: name,
       }),
     };
-    (async () => {
-      try {
+    try {
+      dispatch({
+        type: USER_PROFILE_CHANGE_REQUEST,
+      });
+      const res = await fetch(url, requestOption);
+      const result = await res.json();
+      const last = await result;
+      if (res.ok) {
         dispatch({
-          type: USER_PROFILE_CHANGE_REQUEST,
+          type: USER_PROFILE_CHANGE_SUCCESS,
+          value: last,
         });
-        const res = await fetch(url, requestOption);
-        const result = await res.json();
-        const last = await result;
-        if (res.ok) {
-          dispatch({
-            type: USER_PROFILE_CHANGE_SUCCESS,
-            value: last,
-          });
-        }
-        if (!res.ok) {
-              throw new Error(last.message);
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_PROFILE_CHANGE_FAILED,
-          value: error.message,
-          error: error.message
-        });
-        
       }
-    })();
+      if (!res.ok) {
+        if (last.message === "jwt expired") {
+          dispatch(
+            getUserRefresh(
+              getCookie("refreshToken"),
+              changeProfileInfo(email, password, name)
+            )
+          );
+        }
+        throw new Error(last.message);
+      }
+      return last;
+    } catch (error) {
+      dispatch({
+        type: USER_PROFILE_CHANGE_FAILED,
+        value: error.message,
+        error: error.message,
+      });
+      return error;
+    }
   };
 }
 
-
-export function resetPassword({ password, token, history }) {
+export function resetPassword(password, token, history) {
   const url = " https://norma.nomoreparties.space/api/password-reset/reset";
   return function (dispatch) {
     const requestOption = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        authorization: "Bearer " + getCookie("accessToken"),
       },
       body: JSON.stringify({
         password: password,
@@ -435,7 +448,8 @@ export function resetPassword({ password, token, history }) {
             value: last,
           });
           history.replace({ pathname: "/" });
-        } if (!res.ok){
+        }
+        if (!res.ok) {
           throw new Error(res.status);
         }
       } catch (error) {
