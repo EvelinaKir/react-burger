@@ -1,0 +1,8 @@
+.box{
+    display: grid;
+}
+
+.text{
+    color: #90EE90;
+    display: block;
+}

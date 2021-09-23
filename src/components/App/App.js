@@ -1,66 +1,80 @@
 import React from "react";
 import appStyles from "./App.module.css";
 import AppHeader from "../AppHeader/AppHeader";
-import BurgerIngredients from "../BurgerIngredients/BurgerIngredients";
-import BurgerConstructor from "../BurgerConstructor/BurgerConstructor";
-import Spiner from "../Spiner/Spiner";
+import Login from "../../pages/login";
+import ForgotPassword from "../../pages/forgotPassword";
+import MainPage from "../../pages/mainPage";
+import NotFound404 from "../../pages/notFound404";
+import Profile from "../../pages/profile";
+import Register from "../../pages/register";
+import ResetPassword from "../../pages/resetPassword";
+import { getIngredientsApi } from "../../services/actions/index";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { useEffect } from "react";
-import OrderDetails from "../Modal/OrderDetails";
-import Modal from "../Modal/Modal";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { DndProvider } from "react-dnd";
-import OrderModalError from '../Modal/OrderModalError'
-import {useDispatch, useSelector} from 'react-redux'
-import {getIngredientsApi} from '../../services/actions/index'
-import IngredientDetails from '../Modal/IngredientDetails'
-
+import IngredientDetails from "../../components/Modal/IngredientDetails";
+import LoggedProtectedRoute from "../ProtectedRoute/LoggedProtectedRoute";
+import UnloggedProtectedRoute from "../ProtectedRoute/UnloggedProtectedRoute";
+import LoggedProtectedResetRoute from "../ProtectedRoute/LoggedProtectedResetRoute";
+import {
+  getUserRequest,
+  getCookie,
+} from "../../services/actions/auth";
+import Spiner from "../Spiner/Spiner";
 
 function App() {
   const dispatch = useDispatch();
-  const  {  hasError, error, isLoading, foodData } = useSelector(state => state.apiList)
-  const {ingridientModal, orderModal, orderModalError} = useSelector(state => state.modalInfo)
   const url = "https://norma.nomoreparties.space/api/ingredients";
+  const { hasError, error, isLoading, foodData } = useSelector(
+    (state) => state.apiList
+  );
+  const { ingridientModal } = useSelector((state) => state.modalInfo);
 
   useEffect(() => {
-    dispatch(getIngredientsApi(url))
+    dispatch(getIngredientsApi(url));
+    if (getCookie("accessToken")) {
+      dispatch(getUserRequest());
+    }
   }, []);
 
- 
   return (
     <div className={appStyles.App}>
-      <AppHeader />
-      <main className={appStyles.main}>
-        {isLoading && <Spiner />}
-        {hasError && "Ошибка" && <div>{error}</div>}
-        {!isLoading && !hasError && foodData && (
-          <div className={appStyles.collectYourBurger}>
-            <DndProvider backend={HTML5Backend}> 
-            <BurgerIngredients/>
-            <div className={appStyles.burgerConstructor}>
-                <BurgerConstructor/>
-            </div>
-            </DndProvider>
-            {ingridientModal && <Modal
-                  children={<IngredientDetails/>}
-                  header={'Детали ингредиента'}
-                />}
-                {orderModal &&  <Modal
-                  children={<OrderDetails />
-                  }
-                />}
-                {
-                orderModalError &&  <Modal
-                 children={<OrderModalError />
-                 }
-               /> 
-                }
-                  
-          </div>
-        )}
-      </main>
+      {isLoading && <Spiner />}
+      {hasError && "Ошибка" && <div>{error}</div>}
+      {!isLoading && !hasError && foodData && (
+        <Router>
+          <AppHeader />
+          <Switch>
+            <Route path="/" component={MainPage} exact={!ingridientModal} />
+            <LoggedProtectedRoute path="/login" exact={true}>
+              <Login />
+            </LoggedProtectedRoute>
+            <LoggedProtectedRoute path="/register" exact={true}>
+              <Register />
+            </LoggedProtectedRoute>
+            <LoggedProtectedRoute path="/forgot-password" exact={true}>
+              <ForgotPassword />
+            </LoggedProtectedRoute>
+            <LoggedProtectedResetRoute path="/reset-password" exact={true}>
+              <ResetPassword />
+            </LoggedProtectedResetRoute>
+            <UnloggedProtectedRoute path="/profile">
+              <Profile />
+            </UnloggedProtectedRoute>
+            {!ingridientModal && (
+              <Route path={`/ingredients/:id`}>
+                <IngredientDetails header={"Детали ингредиента"} />
+              </Route>
+            )}
+
+            <Route>
+              <NotFound404 />
+            </Route>
+          </Switch>
+        </Router>
+      )}
     </div>
   );
 }
 
 export default App;
-

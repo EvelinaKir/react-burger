@@ -8,6 +8,7 @@ import { rootReducer } from "./services/reducers";
 import thunk from "redux-thunk";
 import { Provider } from 'react-redux';
 
+
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})

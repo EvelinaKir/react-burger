@@ -1,3 +1,4 @@
+import { getCookie, getUserRefresh } from "./auth";
 export const GET_INGREDIENTS_API_REQUEST = "GET_INGREDIENTS_API_REQUEST";
 export const GET_INGREDIENTS_API_SUCCESS = "GET_INGREDIENTS_API_SUCCESS";
 export const GET_INGREDIENTS_API_FAILED = "GET_INGREDIENTS_API_FAILED";
@@ -25,7 +26,17 @@ export function getIngredientsApi(url) {
     });
     (async () => {
       try{
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer'
+      });
       if (res.ok) {
         const result = await res.json();
         const last = result.data.map((elem) => {
@@ -51,7 +62,6 @@ export function getIngredientsApi(url) {
 
 export function getConstructorIngredients(data) {
   const bun = data.find((elem) => (elem.type === "bun" ? elem : 0));
-  bun.counter += 2;
   return function (dispatch) {
     dispatch({
       type: CONSTRUCTOR_BUN,
@@ -61,7 +71,6 @@ export function getConstructorIngredients(data) {
       type: CONSTRUCTOR_MAIN_INGREDIENTS,
       mainIngredients: data
         .filter((elem) => elem.type !== "bun")
-        .filter((elem) => (elem.counter = 1)),
     });
     dispatch({
       type: COUNT_TOTAL_PRICE,
@@ -111,6 +120,7 @@ export function sendOrder(data) {
           type: SEND_ORDER_SUCCESS,
           data: last,
         });
+ 
       }} catch(error) {
         dispatch({
           type: SEND_ORDER_FAILED,

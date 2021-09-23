@@ -29,5 +29,10 @@
  margin-left: auto;
 }
 
+.activeLink:nth-child(n) p{
+  color: #F2F2F3;
+}
 
-
+.activeLink:nth-child(n) svg{
+  fill: #fff;
+}
