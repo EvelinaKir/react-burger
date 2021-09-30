@@ -2,20 +2,20 @@ import React from "react";
 import { Route, useRouteMatch, Switch } from "react-router-dom";
 import BurgerIngredients from "../components/BurgerIngredients/BurgerIngredients";
 import BurgerConstructor from "../components/BurgerConstructor/BurgerConstructor";
-import OrderDetails from "../components/Modal/OrderDetails";
+import OrderReady from "../components/Modal/OrderReady";
 import Modal from "../components/Modal/Modal";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import OrderModalError from "../components/Modal/OrderModalError";
 import { useSelector } from "react-redux";
 import IngredientDetails from "../components/Modal/IngredientDetails";
+import OrderDetails from "../components/Modal/OrderDetails";
 import mainStyles from "./mainPage.module.css";
 
 function MainPage() {
   const { path } = useRouteMatch();
-  const { ingridientModal, orderModal, orderModalError } = useSelector(
-    (state) => state.modalInfo
-  );
+  const { ingridientModal, orderModal, orderModalError, detailOrderInfo } =
+    useSelector((state) => state.modalInfo);
 
   return (
     <div className={mainStyles.main}>
@@ -26,18 +26,8 @@ function MainPage() {
             <BurgerConstructor />
           </div>
         </DndProvider>
-        <Switch>
-          {ingridientModal && (
-            <Route path={`/ingredients/:id`}>
-              <Modal
-                children={<IngredientDetails />}
-                header={"Детали ингредиента"}
-              />
-            </Route>
-          )}
-        </Switch>
-        {orderModal && <Modal children={<OrderDetails />} />}
-        {orderModalError && <Modal children={<OrderModalError />} />}
+        {orderModal && <Modal children={<OrderReady />} />}
+        {orderModalError && <Modal children={<OrderModalError typeErrorText={'В бургере отсутвует булка'} helpText={'Пожалуйста, добавьте булку'}/>} />}
       </div>
     </div>
   );

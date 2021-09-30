@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import profileStyles from "./profile.module.css";
 import classNames from "classnames";
@@ -6,84 +7,117 @@ import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
 import { NavLink } from "react-router-dom";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { logOut, changeProfileInfo } from "../services/actions/auth";
+import {
+  logOut,
+  changeProfileInfo,
+  profileChangeAxios,
+  logOutAxios,
+} from "../services/actions/auth";
 import { useHistory } from "react-router-dom";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import UnloggedProtectedRoute from "../components/ProtectedRoute/UnloggedProtectedRoute";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
-import { Switch, useRouteMatch } from "react-router-dom";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Switch, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
+import SmallSpiner from "../components/Spiner/SmallSpiner";
+import OrderCards from "../components/OrderCard/OrderCards";
+import { getCookie } from "../services/actions/auth";
 
 function Profile() {
+  const location = useLocation();
+
   const profileText =
     "В этом разделе вы можете изменить свои персональные данные";
   const orderListText =
     "В этом разделе вы можете просмотреть свою историю заказов";
-  const profileTab = useSelector((state) => state.profileTabChange.profileTab);
+
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { path, url } = useRouteMatch();
+  useEffect(() => {
+    dispatch({
+      type: "WS_CONNECTION_START",
+      value: `wss://norma.nomoreparties.space/orders?token=${getCookie(
+        "accessToken"
+      )}`,
+      place: true,
+    });
+  }, []);
 
+  const isLoading = useSelector((state) => state.webSocketAll.isLoading);
+  const data = useSelector((state) => state.webSocketAll.data);
   return (
-    <Router>
+    <>
       <div className={classNames(profileStyles.mainbox)}>
         <div className={classNames(profileStyles.navigation)}>
-          <NavLink
-            onClick={() => dispatch({ type: "PROFILE_SELECTED", value: true })}
-            exact
-            to={{ pathname: `/profile` }}
-            className={classNames(
-              profileStyles.navOption,
-              "text text_type_main-medium"
-            )}
-            activeClassName={classNames(
-              profileStyles.active,
-              "text text_type_main-medium"
-            )}
-          >
-            Профиль
-          </NavLink>
-          <NavLink
-            onClick={() => dispatch({ type: "PROFILE_SELECTED", value: false })}
-            exact
-            to={{ pathname: `/profile/orders` }}
-            className={classNames(
-              profileStyles.navOption,
-              "text text_type_main-medium"
-            )}
-            activeClassName={classNames(
-              profileStyles.active,
-              "text text_type_main-medium"
-            )}
-          >
-            История заказов
-          </NavLink>
-          <button
-            onClick={() => dispatch(logOut(history))}
-            className={classNames(
-              profileStyles.navButton,
-              "text text_type_main-medium mb-20"
-            )}
-          >
-            Выход
-          </button>
-          <Promt>{!profileTab ? orderListText : profileText}</Promt>
+          <div className={classNames(profileStyles.navDiv)}>
+            <NavLink
+              onClick={() =>
+                dispatch({ type: "PROFILE_SELECTED", value: true })
+              }
+              exact
+              to={{ pathname: `/profile` }}
+              className={classNames(
+                profileStyles.navOption,
+                "text text_type_main-medium"
+              )}
+              activeClassName={classNames(
+                profileStyles.active,
+                "text text_type_main-medium"
+              )}
+            >
+              Профиль
+            </NavLink>
+            <NavLink
+              onClick={() =>
+                dispatch({ type: "PROFILE_SELECTED", value: false })
+              }
+              to={{ pathname: `/profile/orders` }}
+              className={classNames(
+                profileStyles.navOption,
+                "text text_type_main-medium"
+              )}
+              activeClassName={classNames(
+                profileStyles.active,
+                "text text_type_main-medium"
+              )}
+            >
+              История заказов
+            </NavLink>
+            <button
+              onClick={() => dispatch(logOutAxios(history))}
+              className={classNames(
+                profileStyles.navButton,
+                "text text_type_main-medium mb-20"
+              )}
+            >
+              Выход
+            </button>
+            <Promt>
+              {location.pathname === "/profile" ? profileText : orderListText}
+            </Promt>
+          </div>
         </div>
 
         <div className={profileStyles.detailed}>
           <Switch>
-            <UnloggedProtectedRoute exact path={`/profile`}>
-              <ProfileMain />
-            </UnloggedProtectedRoute>
+            <UnloggedProtectedRoute
+              exact
+              path={`/profile`}
+              component={ProfileMain}
+            />
             <UnloggedProtectedRoute path={`/profile/orders`}>
-              <OrderHistory />
+              {isLoading && !data && (
+                <div className={profileStyles.spiner}>
+                  <SmallSpiner />
+                </div>
+              )}
+              {!isLoading && data && <OrderHistory />}
             </UnloggedProtectedRoute>
           </Switch>
         </div>
       </div>
-    </Router>
+    </>
   );
 }
 
@@ -91,9 +125,11 @@ function ProfileMain() {
   const all = useSelector((state) => state);
   const dispatch = useDispatch();
   const { email, password, name } = useSelector((state) => state.inputValue);
-  const { error, hasError, userInfo } = useSelector((state) => state.userInfo);
+  const { error, hasError, userInfo, changeIsLoading } = useSelector(
+    (state) => state.userInfo
+  );
   const changeInfo = () => {
-    dispatch(changeProfileInfo(email, password, name));
+    dispatch(profileChangeAxios(email, password, name));
   };
 
   const dontMatch = userInfo.user.email != email || userInfo.user.name != name;
@@ -142,6 +178,7 @@ function ProfileMain() {
           </Button>
         )}
       </div>
+      {changeIsLoading && <SmallSpiner />}
 
       {hasError && <ErrorPrompt error={error} />}
     </>
@@ -151,7 +188,7 @@ function ProfileMain() {
 function OrderHistory() {
   return (
     <div className={classNames(profileStyles.orderHistoryBox)}>
-      <span>Here is your history</span>
+      <OrderCards />
     </div>
   );
 }
@@ -160,7 +197,7 @@ function Promt({ children }) {
   return (
     <span
       className={classNames(
-        profileStyles.navOption,
+        profileStyles.navOptionPromt,
         "text text_type_main-default text_color_inactive mr-15"
       )}
     >

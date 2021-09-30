@@ -1,0 +1,36 @@
+.mainBox{
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr));
+}
+
+
+
+.feed h1 {
+    display: block;
+}
+.feed{
+    max-height: 78vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-width: 608px;
+}
+
+
+.headerText {
+    text-align: start; 
+    max-width: 608px;
+}
+
+
+
+.feedList{
+    max-width: 608px;
+    margin-left: auto;
+}
+
+.spiner {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}

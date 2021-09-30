@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import resetStyles from "./resetPassword.module.css";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link, useHistory } from "react-router-dom";
-import { resetPassword } from "../services/actions/auth";
+import { resetPassword, resetPasswordAxios } from "../services/actions/auth";
 import { LetterCode } from "../components/Inputs/LetterCode";
 import { Password } from "../components/Inputs/Password";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
@@ -16,7 +16,8 @@ function ResetPassword() {
   const all = useSelector((state) => state.forgotRequest);
   const { password, code } = useSelector((state) => state.inputValue);
   const reset = () => {
-    dispatch(resetPassword(password, code, history));
+    // dispatch(resetPassword(password, code, history));
+    dispatch(resetPasswordAxios(password, code, history))
   };
 
   return (

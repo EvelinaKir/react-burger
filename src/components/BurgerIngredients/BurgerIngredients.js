@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import bIStyles from "../BurgerIngredients/BurgerIngredients.module.css";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useRouteMatch } from "react-router-dom";
 
 import { useRef, useEffect } from "react";
 import { switchTab } from "../../services/actions";
@@ -51,21 +52,30 @@ function MainTab() {
 }
 
 function Cards({ type }) {
+  const location = useLocation();
+  const { url } = useRouteMatch();
   const info = useSelector((state) => state.apiList.foodData);
   return (
     <div className={bIStyles.foodCardMain}>
       {info.map((elem, i) => {
         if (elem.type === type) {
           return (
-            <Card
-              id={elem._id}
-              image={elem.image}
-              price={elem.price}
-              name={elem.name}
-              index={i}
-              elem={elem}
-              key={elem._id}
-            />
+            <Link
+              to={{
+                pathname: `/ingredients/${elem._id}`,
+                state: { background: location },
+              }}
+            key={elem._id}>
+              <Card
+                id={elem._id}
+                image={elem.image}
+                price={elem.price}
+                name={elem.name}
+                index={i}
+                elem={elem}
+                key={elem._id}
+              />
+            </Link>
           );
         }
       })}

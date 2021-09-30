@@ -1,0 +1,100 @@
+.number{
+    display: block;
+   
+}
+
+.time{
+    display: block;
+    margin-left: auto;
+}
+.header{
+    display: flex;
+
+}
+.mainBox{
+    background-color: #1C1C21;
+    border-radius: 30px;
+    max-width: 844px !important;
+
+}
+
+
+.image{
+    display: grid;
+    background: 
+    linear-gradient(rgb(0, 0, 0, 1),rgba(0, 0, 0, 1)) padding-box, 
+    linear-gradient(to right, #801AB2,#4C4CFF) border-box;
+   border: 2px solid transparent;
+   border-radius:100px;
+   width:  64px;
+   height:  64px;
+   overflow: hidden;
+   margin-right: -20px;
+}
+
+.orderDetail{
+    display: flex;
+    justify-content: space-between;
+}
+
+.image img{
+    transform: scale(0.8)  translate(-29px, 7px);
+    object-fit: none;
+    max-width: 112px;
+    max-height: 64px;
+display: block;
+/* position: absolute; */
+/* transform: translate(-23px, 4px); */
+}
+
+.ingredients{
+    display: flex;
+}
+.image:nth-child(1){
+    z-index: 8;
+}
+
+.image:nth-child(2){
+    z-index: 7;
+}
+.image:nth-child(3){
+    z-index: 6;
+}
+.image:nth-child(4){
+    z-index: 5;
+}
+.image:nth-child(5){
+    z-index: 4;
+}
+
+.lastImage img{
+    Opacity: 60%; 
+    transform: scale(0.8) translate(-28px, -50px);
+}
+
+.plus{
+    margin-top: 20px;
+    z-index: 8;
+    transform: translate(17px);
+
+}
+span{
+    display: block;
+}
+.price{
+    display: flex;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.price span {
+    margin-right: 9px;
+}
+
+.content span{
+text-align: start;
+}
+
+.doneStatus{
+    color: rgba(0, 204, 204, 1);
+}

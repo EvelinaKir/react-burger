@@ -20,9 +20,16 @@ import {
   COUNT_TOTAL_PRICE,
   COUNT_CARD,
   CONSTRUCTOR_CLEAN,
+  MODAL_ORDER_DETAIL_OPEN,
+  WRITE_CURRENT_ORDER_DETAIL,
+  DELETE_CURRENT_ORDER_DETAIL,
+  GET_INFO_ONE_ORDER_REQUEST,
+  GET_INFO_ONE_ORDER_SUCCESS,
+  GET_INFO_ONE_ORDER_ERROR
 } from "../actions/index";
 
 import {userRegistrationInfo, inputValue, userInfo, forgotRequest, profileChange} from './auth'
+import {webSocketAll} from './webSocket'
 
 const initialIngredientsApi = {
   hasError: false,
@@ -48,7 +55,12 @@ const initialCurrentIngredient = {
 const initialModal = {
   ingridientModal: false,
   orderModal: false,
+  detailOrderInfo: false,
   allClose: true,
+  data: null,
+  isLoading: false,
+  error: null,
+  hasError: false,
 };
 
 const initialOrder = {
@@ -67,6 +79,17 @@ const initialTab = {
 const initialPrice = {
   totalPrice: null
 }
+
+const initialCurrentOrder = {
+  number: '',
+  name: '',
+  status: '',
+  ingredients: [],
+  date: '',
+
+
+}
+
 
 
 const ingredientsApiList = (state = initialIngredientsApi, action) => {
@@ -172,6 +195,32 @@ const currentIngredient = (state = initialCurrentIngredient, action) => {
   }
 }
 
+const currentOrderDetail = (state = initialCurrentOrder, action) => {
+  switch (action.type) {
+    case WRITE_CURRENT_ORDER_DETAIL: {
+      return {
+        ...state,
+        number: action.number,
+        name: action.name,
+        status: action.status,
+        ingredients: action.ingredients,
+        createdAt:  action.date,
+        totalPrice: action.totalPrice
+      };
+    }
+    case DELETE_CURRENT_ORDER_DETAIL: {
+      return {
+        ...state,
+        initialCurrentIngredient
+        }
+      }
+    
+    default: {
+        return state;
+      }
+  }
+}
+
 const modalInfo = (state = initialModal, action) => {
   switch (action.type) {
     case MODAL_INGRIDIENT_OPEN: {
@@ -194,6 +243,17 @@ const modalInfo = (state = initialModal, action) => {
   
       };
     }
+    case MODAL_ORDER_DETAIL_OPEN: {
+      return {
+        ...state,
+        orderModal: false,
+        ingridientModal: false,
+        orderModalError: false,
+        detailOrderInfo: action.open,
+        allClose: false
+  
+      };
+    }
     case MODAL_ORDER_ERROR: {
       return {
         ...state,
@@ -208,7 +268,30 @@ const modalInfo = (state = initialModal, action) => {
         ingridientModal: false,
         orderModal: false,
         orderModalError: false,
+        detailOrderInfo: false,
         allClose: true
+      }
+    }
+    case GET_INFO_ONE_ORDER_REQUEST: {
+      return{
+        ...state,
+        isLoading: true
+      }
+    }
+    case GET_INFO_ONE_ORDER_SUCCESS: {
+      return{
+        ...state,
+        data: action.value,
+        hasError: false,
+        isLoading: false,
+      }
+    }
+    case GET_INFO_ONE_ORDER_ERROR: {
+      return{
+        ...state,
+        hasError: true,
+        isLoading: false,
+        error: action.value
       }
     }
     default: {
@@ -297,4 +380,6 @@ export const rootReducer = combineReducers({
     userInfo : userInfo,
     forgotRequest : forgotRequest,
     profileTabChange : profileChange,
+    webSocketAll: webSocketAll,
+    currentOrderDetail, currentOrderDetail,
 });

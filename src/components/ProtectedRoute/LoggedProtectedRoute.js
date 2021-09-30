@@ -7,7 +7,6 @@ function LoggedProtectedRoute({ children, ...rest }) {
   const logged = useSelector((state) => state.userInfo.logged);
   const {state} = useLocation();
  
- 
   return (
     <Route
       {...rest}

@@ -6,7 +6,7 @@ import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link } from "react-router-dom";
 import { Password } from "../components/Inputs/Password";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { userLogin } from "../services/actions/auth";
+import { userLogin, logInAxios } from "../services/actions/auth";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function Login() {
@@ -35,7 +35,7 @@ function Login() {
         <Button
           type="primary"
           size="medium"
-          onClick={() => dispatch(userLogin(value))}
+          onClick={() => dispatch(logInAxios(value))}
         >
           Войти
         </Button>

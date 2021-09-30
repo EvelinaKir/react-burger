@@ -6,22 +6,27 @@ import reportWebVitals from "./reportWebVitals";
 import { compose, createStore, applyMiddleware } from "redux";
 import { rootReducer } from "./services/reducers";
 import thunk from "redux-thunk";
-import { Provider } from 'react-redux';
-
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { wsMiddleware } from "./services/wsMiddleware/wsMiddleware";
 
 const composeEnhancers =
   typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
     : compose;
 
-const enhancer = composeEnhancers(applyMiddleware(thunk));
+const enhancer = composeEnhancers(
+  applyMiddleware(thunk, wsMiddleware("wss://norma.nomoreparties.space/orders"))
+);
 
 const store = createStore(rootReducer, enhancer);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Router>
+        <App />
+      </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

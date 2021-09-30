@@ -18,7 +18,7 @@ function Card({ id, image, price, name, index, elem }) {
   const { url } = useRouteMatch();
   const getIngredient = (elem) => {
     dispatch(currentIngredient(elem));
-    history.replace({ pathname: `${url}` + "ingredients" + `/` + `${id}` });
+    // history.replace({ pathname: `${url}` + "ingredients" + `/` + `${id}` });
   };
 
   const [{ isDragging }, dragRef] = useDrag({

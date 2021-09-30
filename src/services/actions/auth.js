@@ -1,3 +1,5 @@
+import { instance } from "../actions/axios";
+
 export const USER_SIGN_UP_REQUEST = "USER_SIGN_UP_REQUEST";
 export const USER_SIGN_UP_SUCCESS = "USER_SIGN_UP_SUCCESS";
 export const USER_SIGN_UP_FAILED = "USER_SIGN_UP_FAILED";
@@ -47,139 +49,6 @@ export const CLEAR_ERROR_FOGOT = "CLEAR_ERROR_FOGOT";
 
 export const CLEAR_ERROR_REGISTRATION = "CLEAR_ERROR_REGISTRATION";
 
-export function newUserRegistration(info, history) {
-  const { name, email, password } = info;
-  return function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        name: name,
-      }),
-    };
-    const url = "https://norma.nomoreparties.space/api/auth/register";
-    (async () => {
-      try {
-        dispatch({
-          type: USER_SIGN_UP_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          dispatch({
-            type: USER_SIGN_UP_SUCCESS,
-            value: last,
-          });
-          history.replace({ pathname: "/login" });
-        }
-        if (!res.ok) {
-          throw new Error(res.status);
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_SIGN_UP_FAILED,
-          value: error.status,
-        });
-      }
-    })();
-  };
-}
-
-export function userLogin(info) {
-  const { email, password } = info;
-
-  return function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    };
-
-    const url = "https://norma.nomoreparties.space/api/auth/login";
-    (async () => {
-      try {
-        dispatch({
-          type: USER_LOG_IN_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          setCookie("accessToken", last.accessToken.split("Bearer ")[1]);
-          document.cookie = `refreshToken=${last.refreshToken}`;
-          dispatch({
-            type: USER_LOG_IN_SUCCESS,
-            value: last,
-          });
-          dispatch({
-            type: INPUT_NAME_VALUE,
-            value: last.user.name,
-          });
-        }
-        if (!res.ok) {
-          dispatch({
-            type: USER_LOG_IN_FAILED,
-            value: res.status,
-          });
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_LOG_IN_FAILED,
-          value: error,
-        });
-      }
-    })();
-  };
-}
-
-export function sendForgotRequest(info, history) {
-  return function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: info,
-      }),
-    };
-
-    const url = "https://norma.nomoreparties.space/api/password-reset";
-    (async () => {
-      try {
-        dispatch({
-          type: USER_FORGOT_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          dispatch({
-            type: USER_FORGOT_SUCCESS,
-            value: last,
-          });
-        }
-        if (!res.ok) {
-          dispatch({
-            type: USER_FORGOT_FAILED,
-            value: res.status,
-          });
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_FORGOT_FAILED,
-          value: error,
-        });
-      }
-    })();
-  };
-}
-
 export function setCookie(name, value, props) {
   props = props || {};
   let exp = props.expires;
@@ -213,254 +82,6 @@ export function getCookie(name) {
     )
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
-export function getUserRequest() {
-  const url = "https://norma.nomoreparties.space/api/auth/user";
-  return async function (dispatch) {
-    const request = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
-      },
-    };
-
-    (async () => {
-      try {
-        dispatch({
-          type: GET_USER_REQUEST,
-        });
-
-        const res = await fetch(url, request);
-        const result = await res.json();
-        const last = await result;
-        if (res.ok) {
-          dispatch({
-            type: GET_USER_SUCCESS,
-            value: last,
-          });
-          dispatch({
-            type: USER_NEED_TO_REFRESH,
-            value: false,
-          });
-          dispatch({
-            type: PROFILE_IS_READY,
-            value: true,
-          });
-        }
-        if (!res.ok) {
-          if (last.message === "jwt expired") {
-            dispatch(
-              getUserRefresh(getCookie("refreshToken"),getUserRequest()),
-            );
-          }
-          throw new Error(last.message);
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_NEED_TO_REFRESH,
-          value: true,
-        });
-        dispatch({
-          type: PROFILE_IS_READY,
-          value: false,
-        });
-        dispatch({
-          type: GET_USER_FAILED,
-          errorMessage: error.message,
-        });
-      }
-    })();
-  };
-}
-
-export function getUserRefresh(token, sendDataAgain) {
-  const url = "https://norma.nomoreparties.space/api/auth/token";
-  return async function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: token,
-      }),
-    };
-    (async () => {
-      try {
-        dispatch({
-          type: GET_USER_REFRESH_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-        const result = await res.json();
-        const last = await result;
-        if (res.ok) {
-          dispatch({
-            type: GET_USER_REFRESH_SUCCESS,
-            value: last,
-          });
-          document.cookie = `accessToken=${
-            last.accessToken.split("Bearer ")[1]
-          }; path=/`;
-          document.cookie = `refreshToken=${last.refreshToken}; path=/`;
-          dispatch({
-            type: PROFILE_IS_READY,
-            value: true,
-          });
-          if (sendDataAgain) dispatch(sendDataAgain);
-        }
-        if (!res.ok) {
-          throw new Error(last.message);
-        }
-      } catch (error) {
-        dispatch({
-          type: GET_USER_REFRESH_FAILED,
-          errorMessage: error.message,
-        });
-        dispatch({
-          type: PROFILE_IS_READY,
-          value: false,
-        });
-      }
-    })();
-  };
-}
-
-export function logOut(history) {
-  const url = "https://norma.nomoreparties.space/api/auth/logout";
-  return function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: getCookie("refreshToken"),
-      }),
-    };
-
-    (async () => {
-      try {
-        dispatch({
-          type: USER_LOG_OUT_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          document.cookie = `accessToken=${getCookie('accessToken')}; path=/; expires=` + new Date(-1).toUTCString();
-          document.cookie = `refreshToken=${getCookie('refreshToken')}; path=/; expires=` + new Date(-1).toUTCString();
-          dispatch({
-            type: USER_LOG_OUT_SUCCESS,
-            value: last,
-          });
-          
-          dispatch({
-            type: INPUT_CLEAN_VALUE,
-          });
-          history.replace({ pathname: "/login" });
-        }
-        if (!res.ok) {
-          throw new Error(res.status);
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_LOG_OUT_FAILED,
-          error: error.message,
-        });
-      }
-    })();
-  };
-}
-
-export function changeProfileInfo(email, password, name) {
-  const url = "https://norma.nomoreparties.space/api/auth/user";
-  return async function (dispatch) {
-    const requestOption = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: "Bearer " + getCookie("accessToken"),
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        name: name,
-      }),
-    };
-    try {
-      dispatch({
-        type: USER_PROFILE_CHANGE_REQUEST,
-      });
-      const res = await fetch(url, requestOption);
-      const result = await res.json();
-      const last = await result;
-      if (res.ok) {
-        dispatch({
-          type: USER_PROFILE_CHANGE_SUCCESS,
-          value: last,
-        });
-      }
-      if (!res.ok) {
-        if (last.message === "jwt expired") {
-          dispatch(
-            getUserRefresh(
-              getCookie("refreshToken"),
-              changeProfileInfo(email, password, name)
-            )
-          );
-        }
-        throw new Error(last.message);
-      }
-      return last;
-    } catch (error) {
-      dispatch({
-        type: USER_PROFILE_CHANGE_FAILED,
-        value: error.message,
-        error: error.message,
-      });
-      return error;
-    }
-  };
-}
-
-export function resetPassword(password, token, history) {
-  const url = " https://norma.nomoreparties.space/api/password-reset/reset";
-  return function (dispatch) {
-    const requestOption = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        password: password,
-        token: token,
-      }),
-    };
-    (async () => {
-      try {
-        dispatch({
-          type: USER_RESET_REQUEST,
-        });
-        const res = await fetch(url, requestOption);
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          dispatch({
-            type: USER_RESET_SUCCESS,
-            value: last,
-          });
-          history.replace({ pathname: "/" });
-        }
-        if (!res.ok) {
-          throw new Error(res.status);
-        }
-      } catch (error) {
-        dispatch({
-          type: USER_RESET_FAILED,
-          value: error.status,
-        });
-      }
-    })();
-  };
 }
 
 export function clearNoLogIn() {
@@ -509,3 +130,654 @@ export function loggedInInput(userInfo) {
     });
   };
 }
+
+//AXIOS API REQUESTS
+
+export async function refreshTokenAxios() {
+  return instance
+    .post("auth/token", {
+      token: getCookie("refreshToken"),
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        const { data } = res;
+        document.cookie = `accessToken=${
+          data.accessToken.split("Bearer ")[1]
+        }; path=/`;
+        document.cookie = `refreshToken=${data.refreshToken}; path=/`;
+      } else {
+        return res.data;
+      }
+    });
+}
+
+export function logInAxios(info) {
+  return async function (dispatch) {
+    const { email, password } = info;
+    try {
+      dispatch({
+        type: USER_LOG_IN_REQUEST,
+      });
+      const res = await instance.post("auth/login", {
+        email: email,
+        password: password,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        setCookie("accessToken", data.accessToken.split("Bearer ")[1], {
+          path: "/",
+        });
+        document.cookie = `refreshToken=${data.refreshToken};  path=/`;
+        dispatch({
+          type: USER_LOG_IN_SUCCESS,
+          value: data,
+        });
+        dispatch({
+          type: INPUT_NAME_VALUE,
+          value: data.user.name,
+        });
+      }
+      if (res.status !== 200) {
+        dispatch({
+          type: USER_LOG_IN_FAILED,
+          value: res.status,
+          errorMessage: res.data.message,
+        });
+      }
+    } catch (error) {
+
+      dispatch({
+        type: USER_LOG_IN_FAILED,
+        value: error.status,
+      });
+    }
+  };
+}
+
+export function profileChangeAxios(email, password, name) {
+  return async function (dispatch) {
+    try {
+      dispatch({
+        type: USER_PROFILE_CHANGE_REQUEST,
+      });
+      const res = await instance.patch("auth/user", {
+        email: email,
+        password: password,
+        name: name,
+      });
+      dispatch({
+        type: USER_PROFILE_CHANGE_REQUEST,
+      });
+      if (res.status === 200) {
+        dispatch({
+          type: USER_PROFILE_CHANGE_SUCCESS,
+          value: res.data,
+        });
+      }
+      if (res.status !== 200) {
+        dispatch({
+          type: USER_PROFILE_CHANGE_FAILED,
+          value: res.status,
+          error: res.status,
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: USER_PROFILE_CHANGE_FAILED,
+        value: error,
+        error: error,
+      });
+    }
+  };
+}
+
+export function resetPasswordAxios(password, token, history) {
+  return async function (dispatch) {
+    try {
+      dispatch({
+        type: USER_RESET_REQUEST,
+      });
+      const res = await instance.post("password-reset/reset", {
+        password: password,
+        token: token,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        dispatch({
+          type: USER_RESET_SUCCESS,
+          value: data,
+        });
+        history.replace({ pathname: "/" });
+      }
+      if (res.status !== 200) {
+        throw new Error(res.status);
+      }
+    } catch (error) {
+      dispatch({
+        type: USER_RESET_FAILED,
+        value: error,
+      });
+    }
+  };
+}
+
+export function forgotrequestAxios(info) {
+  return async function (dispatch) {
+    try {
+      dispatch({
+        type: USER_FORGOT_REQUEST,
+      });
+      const res = await instance.post("password-reset", {
+        email: info,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        dispatch({
+          type: USER_FORGOT_SUCCESS,
+          value: data,
+        });
+      }
+      if (res.status !== 200) {
+        dispatch({
+          type: USER_FORGOT_FAILED,
+          value: res.status,
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: USER_FORGOT_FAILED,
+        value: error,
+      });
+    }
+  };
+}
+
+export function logOutAxios(history) {
+  return async function (dispatch) {
+    try {
+      const res = await instance.post("auth/logout", {
+        token: getCookie("refreshToken"),
+      });
+      dispatch({
+        type: USER_LOG_OUT_REQUEST,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        document.cookie =
+          `accessToken=${getCookie("accessToken")}; path=/; expires=` +
+          new Date(-1).toUTCString();
+        document.cookie =
+          `refreshToken=${getCookie("refreshToken")}; path=/; expires=` +
+          new Date(-1).toUTCString();
+        dispatch({
+          type: USER_LOG_OUT_SUCCESS,
+          value: data,
+        });
+        dispatch({
+          type: INPUT_CLEAN_VALUE,
+        });
+        history.replace({ pathname: "/login" });
+      }
+      if (res.status !== 200) {
+        throw new Error(res.status);
+      }
+    } catch (error) {
+      dispatch({
+        type: USER_LOG_OUT_FAILED,
+        error: error.message,
+      });
+    }
+  };
+}
+export function getuserAxios() {
+  return async function (dispatch) {
+    try {
+      dispatch({
+        type: GET_USER_REQUEST,
+      });
+      const res = await instance.get("auth/user");
+      if (res.status === 200) {
+        const { data } = res;
+        dispatch({
+          type: GET_USER_SUCCESS,
+          value: data,
+        });
+        dispatch({
+          type: PROFILE_IS_READY,
+          value: true,
+        });
+      }
+      if (res.status !== 200) {
+        throw new Error(res.status);
+      }
+    } catch (error) {
+      dispatch({
+        type: PROFILE_IS_READY,
+        value: false,
+      });
+      dispatch({
+        type: GET_USER_FAILED,
+        errorMessage: error,
+      });
+    }
+  };
+}
+
+export function registerUserAxios(info, history) {
+  const { name, email, password } = info;
+  return async function (dispatch) {
+    try {
+      const res = await instance.post("auth/register", {
+        email: email,
+        password: password,
+        name: name,
+      });
+      dispatch({
+        type: USER_SIGN_UP_REQUEST,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        dispatch({
+          type: USER_SIGN_UP_SUCCESS,
+          value: data,
+        });
+        history.replace({ pathname: "/login" });
+      }
+      if (!res.ok) {
+        throw new Error(res.status);
+      }
+    } catch (error) {
+      dispatch({
+        type: USER_SIGN_UP_FAILED,
+        value: error,
+      });
+    }
+  };
+}
+
+//// !!!!!!!!!!!! Next code contains fetch request (as an example)
+
+// export function getUserRequest() {
+//   const url = "https://norma.nomoreparties.space/api/auth/user";
+//   return async function (dispatch) {
+//     const request = {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: "Bearer " + getCookie("accessToken"),
+//       },
+//     };
+
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: GET_USER_REQUEST,
+//         });
+
+//         const res = await fetch(url, request);
+//         const result = await res.json();
+//         const last = await result;
+//         if (res.ok) {
+//           dispatch({
+//             type: GET_USER_SUCCESS,
+//             value: last,
+//           });
+//           dispatch({
+//             type: USER_NEED_TO_REFRESH,
+//             value: false,
+//           });
+//           dispatch({
+//             type: PROFILE_IS_READY,
+//             value: true,
+//           });
+//         }
+//         if (!res.ok) {
+//           if (last.message === "jwt expired") {
+//             dispatch(
+//               getUserRefresh(getCookie("refreshToken"), getUserRequest())
+//             );
+//           }
+//           throw new Error(last.message);
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_NEED_TO_REFRESH,
+//           value: true,
+//         });
+//         dispatch({
+//           type: PROFILE_IS_READY,
+//           value: false,
+//         });
+//         dispatch({
+//           type: GET_USER_FAILED,
+//           errorMessage: error.message,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function getUserRefresh(token, sendDataAgain) {
+//   const url = "https://norma.nomoreparties.space/api/auth/token";
+//   return async function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         token: token,
+//       }),
+//     };
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: GET_USER_REFRESH_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+//         const result = await res.json();
+//         const last = await result;
+//         if (res.ok) {
+//           dispatch({
+//             type: GET_USER_REFRESH_SUCCESS,
+//             value: last,
+//           });
+//           document.cookie = `accessToken=${
+//             last.accessToken.split("Bearer ")[1]
+//           }; path=/`;
+//           document.cookie = `refreshToken=${last.refreshToken}; path=/`;
+//           dispatch({
+//             type: PROFILE_IS_READY,
+//             value: true,
+//           });
+//           if (sendDataAgain) dispatch(sendDataAgain);
+//         }
+//         if (!res.ok) {
+//           throw new Error(last.message);
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: GET_USER_REFRESH_FAILED,
+//           errorMessage: error.message,
+//         });
+//         dispatch({
+//           type: PROFILE_IS_READY,
+//           value: false,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function logOut(history) {
+//   const url = "https://norma.nomoreparties.space/api/auth/logout";
+//   return function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         token: getCookie("refreshToken"),
+//       }),
+//     };
+
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: USER_LOG_OUT_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           document.cookie =
+//             `accessToken=${getCookie("accessToken")}; path=/; expires=` +
+//             new Date(-1).toUTCString();
+//           document.cookie =
+//             `refreshToken=${getCookie("refreshToken")}; path=/; expires=` +
+//             new Date(-1).toUTCString();
+//           dispatch({
+//             type: USER_LOG_OUT_SUCCESS,
+//             value: last,
+//           });
+
+//           dispatch({
+//             type: INPUT_CLEAN_VALUE,
+//           });
+//           history.replace({ pathname: "/login" });
+//         }
+//         if (!res.ok) {
+//           throw new Error(res.status);
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_LOG_OUT_FAILED,
+//           error: error.message,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function changeProfileInfo(email, password, name) {
+//   const url = "https://norma.nomoreparties.space/api/auth/user";
+//   return async function (dispatch) {
+//     const requestOption = {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//         authorization: "Bearer " + getCookie("accessToken"),
+//       },
+//       body: JSON.stringify({
+//         email: email,
+//         password: password,
+//         name: name,
+//       }),
+//     };
+//     try {
+//       dispatch({
+//         type: USER_PROFILE_CHANGE_REQUEST,
+//       });
+//       const res = await fetch(url, requestOption);
+//       const result = await res.json();
+//       const last = await result;
+//       if (res.ok) {
+//         dispatch({
+//           type: USER_PROFILE_CHANGE_SUCCESS,
+//           value: last,
+//         });
+//       }
+//       if (!res.ok) {
+//         if (last.message === "jwt expired") {
+//           dispatch(
+//             getUserRefresh(
+//               getCookie("refreshToken"),
+//               changeProfileInfo(email, password, name)
+//             )
+//           );
+//         }
+//         throw new Error(last.message);
+//       }
+//       return last;
+//     } catch (error) {
+//       dispatch({
+//         type: USER_PROFILE_CHANGE_FAILED,
+//         value: error.message,
+//         error: error.message,
+//       });
+//       return error;
+//     }
+//   };
+// }
+
+// export function resetPassword(password, token, history) {
+//   const url = " https://norma.nomoreparties.space/api/password-reset/reset";
+//   return function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         password: password,
+//         token: token,
+//       }),
+//     };
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: USER_RESET_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           dispatch({
+//             type: USER_RESET_SUCCESS,
+//             value: last,
+//           });
+//           history.replace({ pathname: "/" });
+//         }
+//         if (!res.ok) {
+//           throw new Error(res.status);
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_RESET_FAILED,
+//           value: error.status,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function newUserRegistration(info, history) {
+//   const { name, email, password } = info;
+//   return function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         email: email,
+//         password: password,
+//         name: name,
+//       }),
+//     };
+//     const url = "https://norma.nomoreparties.space/api/auth/register";
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: USER_SIGN_UP_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           dispatch({
+//             type: USER_SIGN_UP_SUCCESS,
+//             value: last,
+//           });
+//           history.replace({ pathname: "/login" });
+//         }
+//         if (!res.ok) {
+//           throw new Error(res.status);
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_SIGN_UP_FAILED,
+//           value: error.status,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function userLogin(info) {
+//   const { email, password } = info;
+
+//   return function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         email: email,
+//         password: password,
+//       }),
+//     };
+
+//     const url = "https://norma.nomoreparties.space/api/auth/login";
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: USER_LOG_IN_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           setCookie("accessToken", last.accessToken.split("Bearer ")[1]);
+//           document.cookie = `refreshToken=${last.refreshToken}`;
+//           dispatch({
+//             type: USER_LOG_IN_SUCCESS,
+//             value: last,
+//           });
+//           dispatch({
+//             type: INPUT_NAME_VALUE,
+//             value: last.user.name,
+//           });
+//         }
+//         if (!res.ok) {
+//           dispatch({
+//             type: USER_LOG_IN_FAILED,
+//             value: res.status,
+//           });
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_LOG_IN_FAILED,
+//           value: error,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+// export function sendForgotRequest(info, history) {
+//   return function (dispatch) {
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         email: info,
+//       }),
+//     };
+
+//     const url = "https://norma.nomoreparties.space/api/password-reset";
+//     (async () => {
+//       try {
+//         dispatch({
+//           type: USER_FORGOT_REQUEST,
+//         });
+//         const res = await fetch(url, requestOption);
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           dispatch({
+//             type: USER_FORGOT_SUCCESS,
+//             value: last,
+//           });
+//         }
+//         if (!res.ok) {
+//           dispatch({
+//             type: USER_FORGOT_FAILED,
+//             value: res.status,
+//           });
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: USER_FORGOT_FAILED,
+//           value: error,
+//         });
+//       }
+//     })();
+//   };
+// }

@@ -5,13 +5,13 @@ import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-function IngredientDetails({ header }) {
+function IngredientDetails() {
   const { name } = useSelector((state) => state.currentIngredient);
   const { id } = useParams();
+
   const foodList = useSelector((state) => state.apiList.foodData);
   const exact = foodList.find((elem) => elem._id === id);
   const modal = useSelector((state) => state.modalInfo.ingridientModal);
-
   return (
     <div className={modalStyles.ingredientContainer}>
       {!modal && (
@@ -21,7 +21,8 @@ function IngredientDetails({ header }) {
             "text text_type_main-large mt-10"
           )}
         >
-          {header}
+          {`
+Детали ингредиента`}
         </div>
       )}
       <img

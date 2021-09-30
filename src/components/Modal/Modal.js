@@ -8,15 +8,18 @@ import esc from "../../images/modalImages/modalEsc.svg";
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeModal } from "../../services/actions";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch, useLocation } from "react-router-dom";
 
 const modalRoot = document.getElementById("modal-portal");
 
 function Modal({ children, header }) {
+  const location = useLocation()
+
+  const { url, path } = useRouteMatch();
   const history = useHistory();
   const closeIngredient = () => {
     dispatch(closeModal());
-    history.replace({ pathname: "/" });
+    history.replace({ pathname: location.state ? `${location.state.background.pathname}` :`${url}` });
   };
   const dispatch = useDispatch();
   const { allClose } = useSelector((state) => state.modalInfo);
@@ -40,17 +43,11 @@ function Modal({ children, header }) {
   return ReactDom.createPortal(
     <>
       <ModalOverlay closeClick={() => closeIngredient()} />
-      <div className={modalStyles.mainContainer}>
+      <div className={classNames(modalStyles.mainContainer)}>
         <div className={modalStyles.modalHeader}>
-          <span
-            className={classNames(
-              modalStyles.headerText,
-              "text text_type_main-large ml-10 mt-10"
-            )}
-          >
-            {header}
-          </span>
+          {header}
           <div
+          
             className={classNames(modalStyles.closeButton, "mt-15 mr-10")}
             onClick={() => closeIngredient()}
           >

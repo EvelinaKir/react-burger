@@ -1,4 +1,5 @@
 .overlay{
+    z-index: 10;
     display: block;
     position: fixed;
     bottom: 0; left: 0; top: 0; right: 0;
@@ -14,6 +15,7 @@
 }
 
 .mainContainer{
+    z-index: 1;
     position: fixed;
     background-color: rgba(28, 28, 33, 1);
     border-radius: 30px;
@@ -89,4 +91,82 @@ text-shadow: 0px 4px 32px #3333FF80, 0px 0px 8px #3333FF40, 0px 0px 16px #3333FF
     margin-left: auto;
     margin-right: auto;
     max-width: 5vw;
+}
+
+.orderModalError span {
+    text-align: center !important;
+}
+
+
+.orderImage{
+    display: grid;
+    background: 
+    linear-gradient(rgb(0, 0, 0, 1),rgba(0, 0, 0, 1)) padding-box, 
+    linear-gradient(to right, #801AB2,#4C4CFF) border-box;
+   border: 2px solid transparent;
+   border-radius:100px;
+   width:  56px;
+   height:  56px;
+   overflow: hidden;
+}
+
+.orderImage img{
+    transform: scale(0.7) translate(-39px,4px);
+    object-fit: none;
+    max-width: 112px;
+    max-height: 56px;
+display: block;
+/* position: absolute; */
+/* transform: translate(-23px, 4px); */
+}
+.doneStatus{
+    color: rgba(0, 204, 204, 1);
+}
+
+.ingredientScroll{
+    max-height: 312px;
+    overflow-y: scroll;
+    display: grid;
+}
+.orderDetailModal{
+    max-width: 640px;
+    max-height: 620px;
+    margin: auto;
+    
+}
+
+.scrollInside{
+    max-width: 608px;
+    display: flex;
+    justify-content: space-between;
+
+    
+}
+
+.detailOrderInfoHeader{
+    margin-top: 10vh;
+    text-align: center !important;
+}
+
+.mainOrderDetailInfo span {
+    text-align: start;
+    display: block;
+}
+
+.imageAndNameOrder{
+    display: flex;
+    align-items: center;
+    
+}
+
+.priceOrderInfo{
+    display: flex;
+}
+
+.orderInfoTotal{
+display: flex;
+justify-content: space-between;
+}
+.orderInfoTotalCost{
+    display: flex;
 }

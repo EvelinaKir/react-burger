@@ -8,7 +8,7 @@ import registerStyles from "./register.module.css";
 import { Password } from "../components/Inputs/Password";
 import { NameInput } from "../components/Inputs/NameInput";
 import { LoginInput } from "../components/Inputs/LoginInput";
-import { newUserRegistration } from "../services/actions/auth";
+import { newUserRegistration, registerUserAxios } from "../services/actions/auth";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function Register() {
@@ -20,7 +20,8 @@ function Register() {
   const dispatch = useDispatch();
   const value = useSelector((state) => state.inputValue);
   const registration = () => {
-    dispatch(newUserRegistration(value, history));
+    // dispatch(newUserRegistration(value, history));
+    dispatch(registerUserAxios(value, history))
   };
   return (
     <div className={classNames(registerStyles.mainbox)}>

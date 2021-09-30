@@ -5,7 +5,7 @@ import forgotStyles from "./forgotPassword.module.css";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import { LoginInput } from "../components/Inputs/LoginInput";
 import { Link, useHistory } from "react-router-dom";
-import { sendForgotRequest } from "../services/actions/auth";
+import { sendForgotRequest, forgotrequestAxios } from "../services/actions/auth";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 
 function ForgotPassword() {
@@ -21,7 +21,8 @@ function ForgotPassword() {
   const history = useHistory();
   const resetPassword = () => {
     if (validateEmail(value)) {
-      dispatch(sendForgotRequest(value, history));
+      // dispatch(sendForgotRequest(value));
+      dispatch(forgotrequestAxios(value))
       history.replace({ pathname: "/reset-password" });
     } else
       dispatch({
