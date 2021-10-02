@@ -1,11 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import {refreshTokenAxios} from '../actions/auth'
+import { getuserAxios, getCookie } from "../actions/auth";
 
 export const wsMiddleware = () => {
   return (store) => {
     let socket = null;
 
     return (next) => (action) => {
+
       const { dispatch, getState } = store;
       const { type, value } = action;
       const data = getState().webSocketAll;
@@ -24,19 +25,19 @@ export const wsMiddleware = () => {
         socket.onmessage = (event) => {
           const { data } = event;
           const parsedData = JSON.parse(data);
-          console.log(event)
-          console.log("message!");
-
+         
           dispatch({ type: "WS_GET_MESSAGE", value: parsedData });
+         
           dispatch({ type: "GET_INFO_ONE_ORDER_SUCCESS", value: parsedData });
         };
         socket.onerror = (event) => {
           dispatch({ type: "WS_CONNECTION_ERROR", value: event });
         };
         socket.onclose = (event) => {
-          console.log("closed");
-          console.log(event)
+
           dispatch({ type: "WS_CONNECTION_CLOSED", value: event });
+          
+          
         };
       }
 

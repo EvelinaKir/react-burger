@@ -21,7 +21,7 @@ import { useParams } from "react-router-dom";
 function OrderCards() {
   const location = useLocation();
   const { url } = useRouteMatch();
-
+console.log(url)
   const { orders, total, totalToday } = useSelector(
     (state) => state.webSocketAll.data
   );
@@ -50,10 +50,12 @@ function OrderCard({ elem }) {
   const dispatch = useDispatch();
   const { createdAt, ingredients, name, number, updatedAt, _id } = elem;
   const all = useSelector((state) => state.apiList.foodData);
-  const { url } = useRouteMatch();
-  const status = url === "/profile/orders" ? elem.status : "";
-  const { right, totalCost } = countCostOrder(all, ingredients);
+  const { url, path } = useRouteMatch();
 
+  const status = path === "/profile/orders" ? elem.status : "";
+  const shownStatus = status === 'done' ? 'Выполнен' : status === 'pending' ? 'Готовится' : status === 'created' ? 'Создан' : ''
+  const { right, totalCost } = countCostOrder(all, ingredients);
+  const statusStyle = status === 'done' ? OrderCardStyles.done :  ''
   const getDetailOrder = () => {
     dispatch(currentOrder(elem));
   };
@@ -96,11 +98,7 @@ function OrderCard({ elem }) {
             "text text_type_main-default mb-6"
           )}
         >
-          {status === "done" ? (
-            <span className={OrderCardStyles.doneStatus}>{"Выполнен"}</span>
-          ) : (
-            <span>{""}</span>
-          )}
+            <span className={`${statusStyle}`}>{shownStatus}</span>   
         </span>
         <div className={classNames(OrderCardStyles.orderDetail)}>
           <div className={classNames(OrderCardStyles.ingredients, "mr-6")}>

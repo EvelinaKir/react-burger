@@ -9,10 +9,7 @@ import NotFound404 from "../../pages/notFound404";
 import Profile from "../../pages/profile";
 import Register from "../../pages/register";
 import ResetPassword from "../../pages/resetPassword";
-import {
-  getIngredientsApi,
-  getIngredientsApiAxios,
-} from "../../services/actions/index";
+import { getIngredientsApiAxios } from "../../services/actions/index";
 import { useDispatch, useSelector } from "react-redux";
 import {
   BrowserRouter as Router,
@@ -20,7 +17,6 @@ import {
   Switch,
   useLocation,
   useRouteMatch,
-  useParams,
   useHistory,
 } from "react-router-dom";
 import { useEffect } from "react";
@@ -29,11 +25,7 @@ import LoggedProtectedRoute from "../ProtectedRoute/LoggedProtectedRoute";
 import OrderDetails from "../Modal/OrderDetails";
 import UnloggedProtectedRoute from "../ProtectedRoute/UnloggedProtectedRoute";
 import LoggedProtectedResetRoute from "../ProtectedRoute/LoggedProtectedResetRoute";
-import {
-  getUserRequest,
-  getuserAxios,
-  getCookie,
-} from "../../services/actions/auth";
+import { getuserAxios, getCookie } from "../../services/actions/auth";
 import Spiner from "../Spiner/Spiner";
 import Modal from "../Modal/Modal";
 
@@ -41,15 +33,11 @@ function App() {
   const history = useHistory();
   const location = useLocation();
   const { path, ur } = useRouteMatch();
-  console.log(history)
+  console.log(path);
   const dispatch = useDispatch();
   const { hasError, error, isLoading, foodData } = useSelector(
     (state) => state.apiList
   );
-  const { ingridientModal, detailOrderInfo } = useSelector(
-    (state) => state.modalInfo
-  );
-  const all = useSelector((state) => state);
 
   useEffect(() => {
     // dispatch(getIngredientsApi(url));
@@ -65,12 +53,8 @@ function App() {
   );
   const background =
     history.action === "PUSH" && location.state && location.state.background;
-  const ingHeader = "Детали ингредиента";
-  console.log(history.action)
-  console.log(location)
-  const ex = history.action === 'POP' && location.pathname !== '/profile/orders' ? true : false
 
-  
+
   return (
     <div className={appStyles.App}>
       {isLoading && <Spiner />}
@@ -93,7 +77,7 @@ function App() {
             <LoggedProtectedResetRoute exact path="/reset-password">
               <ResetPassword />
             </LoggedProtectedResetRoute>
-            <UnloggedProtectedRoute exact={ex} path="/profile">
+            <UnloggedProtectedRoute path={`/profile`}>
               <Profile />
             </UnloggedProtectedRoute>
             <Route
@@ -102,7 +86,6 @@ function App() {
               component={IngredientDetails}
             />
             <Route exact path={`/feed/:id`} component={OrderDetails} />
-            <Route  path={`/profile/orders/:id`} component={OrderDetails} />
             <Route>
               <NotFound404 />
             </Route>
@@ -124,7 +107,7 @@ function App() {
           )}
           {background && (
             <Route
-              path={`/feed/:id`}
+              path={`${background.pathname}/:id`}
               children={
                 <Modal
                   header={
@@ -141,26 +124,6 @@ function App() {
               }
             />
           )}
-          {background && (
-            <Route
-              path={`/profile/orders/:id`}
-              render={() => (
-                <Modal
-                  header={
-                    <span
-                      className={
-                        "text text_type_digits-default  ml-10 mt-10 mb-10"
-                      }
-                    >
-                      {`#${currentOrderNumber}`}
-                    </span>
-                  }
-                  children={<OrderDetails />}
-                />
-              )}
-            ></Route>
-          )}
-          
         </>
       )}
     </div>

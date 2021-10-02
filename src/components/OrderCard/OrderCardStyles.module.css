@@ -95,6 +95,8 @@ span{
 text-align: start;
 }
 
-.doneStatus{
+
+.done{
     color: rgba(0, 204, 204, 1);
 }
+

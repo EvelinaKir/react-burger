@@ -8,9 +8,7 @@ import classNames from "classnames";
 function OrderNumbers(){
     const {orders, total, totalToday} =  useSelector(state => state.webSocketAll.data)
     const doneOrders = orders.filter(elem => elem.status === 'done')
-    const inWorkOrders = orders.filter(elem => elem.status === 'inWork')
-    let doneStyle = '' 
-    doneOrders.length > 40 ? doneStyle = 'text text_type_main-small' : doneStyle ='text text_type_digits-default'
+    const inWorkOrders = orders.filter(elem => elem.status === 'pending')
     
     return(
         <div className={classNames(OrderNumbersStyles.main)}>
@@ -19,15 +17,15 @@ function OrderNumbers(){
                     <span className={classNames('text text_type_main-medium pb-6', OrderNumbersStyles.readyHeader)}>Готовы:</span>
                     <div className={classNames('mr-9', OrderNumbersStyles.readyNumbers)}>
                         {doneOrders.map((elem, i) => {
-                            return (<span className={`mb-2 mr-1 ${doneStyle}`}key={elem.number}>{elem.number}</span>)
+                            return (<span className={`mb-2 mr-1 text text_type_digits-default`}key={elem.number}>{elem.number}</span>)
                         })}
                     </div>
                 </div>
                 <div className={classNames(OrderNumbersStyles.inWork)}>
                 <span className={classNames('text text_type_main-medium pb-6', OrderNumbersStyles.inWorkTitle)}>В работе:</span>
                 <div className={classNames(' mr-9', OrderNumbersStyles.inWorkNumbers)}>
-                {doneOrders.map((elem, i) => {
-                            return (<span className={`mb-2 mr-1 ${doneStyle}`}key={elem.number}>{elem.number}</span>)
+                {inWorkOrders.map((elem, i) => {
+                            return (<span className={`mb-2 mr-1 text text_type_digits-default`}key={elem.number}>{elem.number}</span>)
                         })}  
                 </div>
                 </div>

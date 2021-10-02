@@ -42,7 +42,7 @@ function Feed() {
       });
     };
   }, []);
-  
+
   return (
     <div className={classNames(feedStyles.main)}>
       <div className={classNames(feedStyles.mainBox, "mr-15")}>

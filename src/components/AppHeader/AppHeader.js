@@ -119,7 +119,6 @@ function AppHeader() {
             )}
           >
             <NavLink
-              exact
               activeClassName={appHeaderStyles.activeLink}
               to={{ pathname: "/profile" }}
               className={appHeaderStyles.headerbox}

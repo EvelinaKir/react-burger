@@ -25,11 +25,17 @@ import {
   DELETE_CURRENT_ORDER_DETAIL,
   GET_INFO_ONE_ORDER_REQUEST,
   GET_INFO_ONE_ORDER_SUCCESS,
-  GET_INFO_ONE_ORDER_ERROR
+  GET_INFO_ONE_ORDER_ERROR,
 } from "../actions/index";
 
-import {userRegistrationInfo, inputValue, userInfo, forgotRequest, profileChange} from './auth'
-import {webSocketAll} from './webSocket'
+import {
+  userRegistrationInfo,
+  inputValue,
+  userInfo,
+  forgotRequest,
+  profileChange,
+} from "./auth";
+import { webSocketAll } from "./webSocket";
 
 const initialIngredientsApi = {
   hasError: false,
@@ -69,28 +75,24 @@ const initialOrder = {
   isLoading: false,
   orderInfo: null,
   orderBase: [],
-  success: false
-}
+  success: false,
+};
 
 const initialTab = {
-  currentTab : 'bun'
-}
+  currentTab: "bun",
+};
 
 const initialPrice = {
-  totalPrice: null
-}
+  totalPrice: null,
+};
 
 const initialCurrentOrder = {
-  number: '',
-  name: '',
-  status: '',
+  number: "",
+  name: "",
+  status: "",
   ingredients: [],
-  date: '',
-
-
-}
-
-
+  date: "",
+};
 
 const ingredientsApiList = (state = initialIngredientsApi, action) => {
   switch (action.type) {
@@ -120,10 +122,9 @@ const ingredientsApiList = (state = initialIngredientsApi, action) => {
     case COUNT_CARD: {
       return {
         ...state,
-        foodData: action.value
-
-        }
-      }
+        foodData: action.value,
+      };
+    }
     default: {
       return state;
     }
@@ -150,15 +151,15 @@ const ingredientsConstructorList = (
     case CONSTRUCTOR_CARD_CHANGE: {
       return {
         ...state,
-        mainIngredients: action.value
-      }
+        mainIngredients: action.value,
+      };
     }
     case CONSTRUCTOR_CLEAN: {
       return {
         ...state,
         mainIngredients: initialIngredientsConstructorList.mainIngredients,
-        bun: initialIngredientsConstructorList.bun
-      }
+        bun: initialIngredientsConstructorList.bun,
+      };
     }
     default: {
       return state;
@@ -166,34 +167,31 @@ const ingredientsConstructorList = (
   }
 };
 
-
 const currentIngredient = (state = initialCurrentIngredient, action) => {
   switch (action.type) {
     case WRITE_CURRENT_INGREDIENT: {
       return {
         ...state,
-          name: action.name,
+        name: action.name,
         image: action.image,
         calories: action.calories,
         proteins: action.proteins,
         fat: action.fat,
         carbohydrates: action.carbohydrates,
-
-        
       };
     }
     case DELETE_CURRENT_INGREDIENT: {
       return {
         ...state,
-        initialCurrentIngredient
-        }
-      }
-    
+        initialCurrentIngredient,
+      };
+    }
+
     default: {
-        return state;
-      }
+      return state;
+    }
   }
-}
+};
 
 const currentOrderDetail = (state = initialCurrentOrder, action) => {
   switch (action.type) {
@@ -204,22 +202,22 @@ const currentOrderDetail = (state = initialCurrentOrder, action) => {
         name: action.name,
         status: action.status,
         ingredients: action.ingredients,
-        createdAt:  action.date,
-        totalPrice: action.totalPrice
+        createdAt: action.date,
+        totalPrice: action.totalPrice,
       };
     }
     case DELETE_CURRENT_ORDER_DETAIL: {
       return {
         ...state,
-        initialCurrentIngredient
-        }
-      }
-    
+        initialCurrentIngredient,
+      };
+    }
+
     default: {
-        return state;
-      }
+      return state;
+    }
   }
-}
+};
 
 const modalInfo = (state = initialModal, action) => {
   switch (action.type) {
@@ -230,7 +228,6 @@ const modalInfo = (state = initialModal, action) => {
         orderModal: false,
         allClose: false,
         orderModalError: false,
-  
       };
     }
     case MODAL_ORDER_OPEN: {
@@ -239,8 +236,7 @@ const modalInfo = (state = initialModal, action) => {
         orderModal: action.open,
         ingridientModal: false,
         orderModalError: false,
-        allClose: false
-  
+        allClose: false,
       };
     }
     case MODAL_ORDER_DETAIL_OPEN: {
@@ -250,8 +246,7 @@ const modalInfo = (state = initialModal, action) => {
         ingridientModal: false,
         orderModalError: false,
         detailOrderInfo: action.open,
-        allClose: false
-  
+        allClose: false,
       };
     }
     case MODAL_ORDER_ERROR: {
@@ -260,7 +255,7 @@ const modalInfo = (state = initialModal, action) => {
         orderModalError: action.open,
         ingridientModal: false,
         allClose: false,
-      }
+      };
     }
     case MODAL_CLOSE: {
       return {
@@ -269,117 +264,111 @@ const modalInfo = (state = initialModal, action) => {
         orderModal: false,
         orderModalError: false,
         detailOrderInfo: false,
-        allClose: true
-      }
+        allClose: true,
+      };
     }
     case GET_INFO_ONE_ORDER_REQUEST: {
-      return{
+      return {
         ...state,
-        isLoading: true
-      }
+        isLoading: true,
+      };
     }
     case GET_INFO_ONE_ORDER_SUCCESS: {
-      return{
+      return {
         ...state,
         data: action.value,
         hasError: false,
         isLoading: false,
-      }
+      };
     }
     case GET_INFO_ONE_ORDER_ERROR: {
-      return{
+      return {
         ...state,
         hasError: true,
         isLoading: false,
-        error: action.value
-      }
+        error: action.value,
+      };
     }
     default: {
-        return state;
-      }
-  }
-}
-
-const createdOrder = (state = initialOrder, action) => {
-    switch (action.type) {
-      case SEND_ORDER_REQUEST: {
-        return {
-          ...state,
-          isLoading: true
-        }
-      }
-      case SEND_ORDER_SUCCESS: {
-        return{
-          ...state,
-          isLoading: false,
-           success: true,
-           hasError: false,
-          orderInfo: action.data,
-          orderBase: state.orderBase.concat(action.data)
-          
-         
-        }
-      }
-      case SEND_ORDER_FAILED: {
-        return {
-          ...state,
-          isLoading: false,
-          hasError: true,
-          error: action.error,
-          orderInfo: null
-        }
-      }
-      default: {
-        return state;
-      }
+      return state;
     }
+  }
 };
 
+const createdOrder = (state = initialOrder, action) => {
+  switch (action.type) {
+    case SEND_ORDER_REQUEST: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case SEND_ORDER_SUCCESS: {
+      return {
+        ...state,
+        isLoading: false,
+        success: true,
+        hasError: false,
+        orderInfo: action.data,
+        orderBase: state.orderBase.concat(action.data),
+      };
+    }
+    case SEND_ORDER_FAILED: {
+      return {
+        ...state,
+        isLoading: false,
+        hasError: true,
+        error: action.error,
+        orderInfo: null,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+};
 
 const tabSwtich = (state = initialTab, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case TAB_SWITCH: {
       return {
         ...state,
-        currentTab: action.value
-      }
+        currentTab: action.value,
+      };
     }
     default: {
       return state;
     }
   }
-}
+};
 const totalPrice = (state = initialPrice, action) => {
-  switch(action.type) {
+  switch (action.type) {
     case COUNT_TOTAL_PRICE: {
       return {
         ...state,
-        totalPrice: action.value
-      }
+        totalPrice: action.value,
+      };
     }
     default: {
       return state;
     }
   }
-}
-
-
-
-
+};
 
 export const rootReducer = combineReducers({
   apiList: ingredientsApiList,
   constructorList: ingredientsConstructorList,
   modalInfo: modalInfo,
   currentIngredient: currentIngredient,
-    createdOrder: createdOrder,
-    tabSwtich: tabSwtich,
-    price: totalPrice,
-    registration: userRegistrationInfo,
-    inputValue : inputValue,
-    userInfo : userInfo,
-    forgotRequest : forgotRequest,
-    profileTabChange : profileChange,
-    webSocketAll: webSocketAll,
-    currentOrderDetail, currentOrderDetail,
+  createdOrder: createdOrder,
+  tabSwtich: tabSwtich,
+  price: totalPrice,
+  registration: userRegistrationInfo,
+  inputValue: inputValue,
+  userInfo: userInfo,
+  forgotRequest: forgotRequest,
+  profileTabChange: profileChange,
+  webSocketAll: webSocketAll,
+  currentOrderDetail,
+  currentOrderDetail,
 });

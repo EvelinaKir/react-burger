@@ -71,29 +71,28 @@ export const GET_INFO_ONE_ORDER_ERROR = "GET_INFO_ONE_ORDER_ERROR";
 // }
 
 //axios code
-export function getOrderAxios(url){
-
-  return async function(dispatch){
- try {
-  const res = await instance.get(url);
-  dispatch({
-    type: GET_INFO_ONE_ORDER_REQUEST,
-  })
-  if (res.status === 200){
-    const { data } = res;
-// 
-    dispatch({
-      type: GET_INFO_ONE_ORDER_SUCCESS,
-      value: data
-    })
-  }
- } catch (error){
-  dispatch({
-    type: GET_INFO_ONE_ORDER_ERROR,
-    error: `Ошибка! ${error.message}`,
-  });
- }
-  }
+export function getOrderAxios(url) {
+  return async function (dispatch) {
+    try {
+      const res = await instance.get(url);
+      dispatch({
+        type: GET_INFO_ONE_ORDER_REQUEST,
+      });
+      if (res.status === 200) {
+        const { data } = res;
+        //
+        dispatch({
+          type: GET_INFO_ONE_ORDER_SUCCESS,
+          value: data,
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: GET_INFO_ONE_ORDER_ERROR,
+        error: `Ошибка! ${error.message}`,
+      });
+    }
+  };
 }
 export function getIngredientsApiAxios() {
   return async function (dispatch) {
@@ -160,62 +159,66 @@ export function currentIngredient(elem) {
   };
 }
 
-export function sendOrder(data) {
-  return function (dispatch) {
-    dispatch({
-      type: SEND_ORDER_REQUEST,
-    });
-    const requestOption = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      Authorization: "Bearer " + getCookie("accessToken"),
-      body: JSON.stringify({
+// export function sendOrder(data) {
+//   return function (dispatch) {
+//     dispatch({
+//       type: SEND_ORDER_REQUEST,
+//     });
+//     const requestOption = {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json",
+//       Authorization: "Bearer " + getCookie("accessToken")
+//     },
+//       body: JSON.stringify({
+//         ingredients: data,
+//       }),
+//     };
+//     const url = "https://norma.nomoreparties.space/api/orders";
+//     (async () => {
+//       try {
+//         const res = await fetch(url, requestOption);
+//         if (res.ok) {
+//           const result = await res.json();
+//           const last = await result;
+//           dispatch({
+//             type: SEND_ORDER_SUCCESS,
+//             data: last,
+//           });
+//         }
+//       } catch (error) {
+//         dispatch({
+//           type: SEND_ORDER_FAILED,
+//           error: error.message,
+//         });
+//       }
+//     })();
+//   };
+// }
+
+export function sendOrderAxios(data) {
+  return async function (dispatch) {
+    try {
+      dispatch({
+        type: SEND_ORDER_REQUEST,
+      });
+      const res = await instance.post("orders", {
         ingredients: data,
-      }),
-    };
-    const url = "https://norma.nomoreparties.space/api/orders";
-    (async () => {
-      try {
-        const res = await fetch(url, requestOption);
-        if (res.ok) {
-          const result = await res.json();
-          const last = await result;
-          dispatch({
-            type: SEND_ORDER_SUCCESS,
-            data: last,
-          });
-        }
-      } catch (error) {
+      });
+      if (res.status === 200) {
+        const { data } = res;
         dispatch({
-          type: SEND_ORDER_FAILED,
-          error: error.message,
+          type: SEND_ORDER_SUCCESS,
+          data: data,
         });
       }
-    })();
+    } catch (error) {
+      dispatch({
+        type: SEND_ORDER_FAILED,
+        error: error,
+      });
+    }
   };
 }
-
-// export function sendOrderAxios(data){
-//   return async function(dispatch){
-//     try {
-//     const res = await instance.post('orders', {
-//       ingredients: data
-//     })
-//     if (res.status === 200){
-//       const {data} = res
-//       dispatch({
-//         type: SEND_ORDER_SUCCESS,
-//         data: data,
-//       });
-//     }
-//   } catch (error) {
-//     dispatch({
-//       type: SEND_ORDER_FAILED,
-//       error: error,
-//     });
-//   }
-//   }
-// }
 
 export function switchTab(e) {
   return function (dispatch) {
@@ -371,7 +374,7 @@ export function openModalOrder(infoToSend) {
       dispatch({
         type: "CONSTRUCTOR_CLEAN",
       });
-      dispatch(sendOrder(infoToSend));
+      dispatch(sendOrderAxios(infoToSend));
       dispatch({
         type: "MODAL_ORDER_OPEN",
         open: true,
@@ -441,14 +444,18 @@ export function countDate(createdAt) {
       newDate.splice(
         0,
         1,
-        `${minusDay} ${minusDay <= 4 ? "дня" : "дней"} назад`
+        minusDay === 1
+          ? "Вчера,"
+          : `${minusDay} ${minusDay <= 4 ? "дня" : "дней"} назад`
       );
     }
-    if (orderDay < today && orderDay !== today - 1){
+    if (orderDay < today && orderDay !== today - 1) {
       newDate.splice(
         0,
         1,
-        `${minusDay} ${minusDay <= 4 ? "дня" : "дней"} назад`
+        minusDay === 1
+          ? "Вчера,"
+          : `${minusDay} ${minusDay <= 4 ? "дня" : "дней"} назад`
       );
     }
     newDate.splice(2, 1, `i-${arr[2]}`);

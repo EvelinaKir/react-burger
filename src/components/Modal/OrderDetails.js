@@ -22,7 +22,7 @@ function OrderDetails(e) {
   const { path, ur } = useRouteMatch();
   const dispatch = useDispatch();
   const { id } = useParams();
-
+  console.log("path in orderDetails=", path);
   const { isLoading, data, error, hasError } = useSelector(
     (state) => state.modalInfo
   );
@@ -55,7 +55,7 @@ function Container({ id }) {
 
   if (!order) {
     return (
-      <div className={'mt-30'}>
+      <div className={"mt-30"}>
         <OrderModalError
           typeErrorText={"Заказ не найден"}
           helpText={`Возможно его уже нет в списках!`}

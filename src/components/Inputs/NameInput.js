@@ -17,6 +17,7 @@ export function NameInput({ icon }) {
     <Input
       icon={icon}
       type={"text"}
+      style={{outerWidth: '100%'}}
       placeholder={"Имя"}
       onChange={onChange}
       value={value}
