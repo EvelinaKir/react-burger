@@ -81,7 +81,7 @@ text-shadow: 0px 4px 32px #3333FF80, 0px 0px 8px #3333FF40, 0px 0px 16px #3333FF
     display: block;
 }
 
-.orderModalError{
+.ModalError{
     display: grid;
     justify-content: center;
 }
@@ -93,7 +93,7 @@ text-shadow: 0px 4px 32px #3333FF80, 0px 0px 8px #3333FF40, 0px 0px 16px #3333FF
     max-width: 5vw;
 }
 
-.orderModalError span {
+.ModalError span {
     text-align: center !important;
 }
 
