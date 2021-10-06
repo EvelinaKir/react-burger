@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import React, {FunctionComponent} from "react";
+import React, { FunctionComponent } from "react";
 import errorStyles from "./errorPrompt.module.css";
 
-const ErrorPrompt: FunctionComponent<{error: number | string}> = ({error}) => {
+const ErrorPrompt: FunctionComponent<{ error: number | string | null }> = ({ error }) => {
   return (
     <div className={classNames(errorStyles.box, "mt-10")}>
       <span

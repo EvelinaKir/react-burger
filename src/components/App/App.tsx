@@ -11,9 +11,8 @@ import Register from "../../pages/register";
 import ResetPassword from "../../pages/resetPassword";
 import { getIngredientsApiAxios } from "../../services/actions/index";
 import { useDispatch, useSelector } from '../../services/types/hooks'
-import {Location} from 'history/index'
+import { Location } from 'history/index'
 import {
-  BrowserRouter as Router,
   Route,
   Switch,
   useLocation,
@@ -25,15 +24,18 @@ import LoggedProtectedRoute from "../ProtectedRoute/LoggedProtectedRoute";
 import OrderDetails from "../Modal/OrderDetails";
 import UnloggedProtectedRoute from "../ProtectedRoute/UnloggedProtectedRoute";
 import LoggedProtectedResetRoute from "../ProtectedRoute/LoggedProtectedResetRoute";
-import { getuserAxios, getCookie } from "../../services/actions/auth";
+import { getUserAxios, getCookie } from "../../services/actions/auth";
 import Spiner from "../Spiner/Spiner";
 import Modal from "../Modal/Modal";
 
 
+type TPath = {
+  pathname: string
+} & Location
 
 function App() {
   const history = useHistory();
-  const location = useLocation<any>();
+  const location = useLocation<{ background: TPath }>();
 
   const dispatch = useDispatch();
   const { hasError, error, isLoading, foodData } = useSelector(
@@ -44,7 +46,7 @@ function App() {
     dispatch(getIngredientsApiAxios());
 
     if (getCookie("accessToken")) {
-      dispatch(getuserAxios());
+      dispatch(getUserAxios());
     }
   }, []);
   const currentOrderNumber = useSelector(

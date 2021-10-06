@@ -2,11 +2,12 @@ import ready from "../../images/modalImages/animatedModalReady.gif";
 import modalStyles from "../Modal/ModalStyles.module.css";
 import React from "react";
 import classNames from "classnames";
-import {useSelector} from '../../services/types/hooks' 
+import { useSelector } from '../../services/types/hooks'
 
 
 function OrderReady() {
-const {hasError, error, isLoading, orderInfo, success} = useSelector(state => state.createdOrder)
+  const { hasError, error, isLoading, orderInfo, success } = useSelector(state => state.createdOrder)
+
   return (
     <>
       {isLoading && (
@@ -20,7 +21,7 @@ const {hasError, error, isLoading, orderInfo, success} = useSelector(state => st
           Loading...
         </span>
       )}
-      {!isLoading && !hasError && success && (
+      {orderInfo && !isLoading && !hasError && success && (
         <>
           <span
             className={classNames(
@@ -70,12 +71,11 @@ const {hasError, error, isLoading, orderInfo, success} = useSelector(state => st
           modalStyles.text,
           "text text_type_digits-large mb-8"
         )}>
-          {`Ops! Ошибка ${error}`} 
+          {`Ops! Ошибка ${error}`}
         </span>
       )}
     </>
   );
-  
 }
 
 export default OrderReady;

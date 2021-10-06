@@ -11,31 +11,19 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from '../../services/types/hooks'
 import {
   clearNoLogIn,
-  loggedInInput,
 } from "../../services/actions/auth";
 
 function AppHeader() {
-  const { logged, userInfo } =
+  const { logged } =
     useSelector((state) => state.userInfo);
   const location = useLocation();
   const dispatch = useDispatch();
   useEffect(() => {
-    if (logged) {
-      dispatch({
-        type: "INPUT_PASSWORD_VALUE",
-        value: "",
-      });
-    }
     if (!logged) {
       dispatch(clearNoLogIn());
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (logged) {
-      dispatch(loggedInInput(userInfo));
-    }
-  }, [logged]);
 
   return (
     <header className={appHeaderStyles.headerMain}>
@@ -99,7 +87,10 @@ function AppHeader() {
             )}
           >
             <div className={appHeaderStyles.headerbox}>
-              <Logo />
+              <NavLink exact to={{ pathname: "/" }} >
+                <Logo />
+              </NavLink>
+
             </div>
           </li>
           <li

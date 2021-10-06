@@ -1,11 +1,10 @@
 import modalStyles from "../Modal/ModalStyles.module.css";
-import React, {FunctionComponent} from "react";
+import React, { FunctionComponent } from "react";
 import classNames from "classnames";
 import ErrorModal from "./ErrorModal";
 import { useParams } from "react-router-dom";
 import {
   countDate,
-  currentOrder,
   countCostOrder,
 } from "../../services/actions/index";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -14,8 +13,8 @@ import { useDispatch, useSelector } from '../../services/types/hooks';
 import { getOrderAxios } from "../../services/actions/index";
 import Spiner from "../Spiner/Spiner";
 import { getCookie } from "../../services/actions/auth";
-import { Switch, useRouteMatch, useLocation, Route } from "react-router-dom";
-import {newObj} from '../../services/types/interfaces'
+import { useRouteMatch } from "react-router-dom";
+import { newObj } from '../../services/types/interfacesAndTypes'
 
 
 type QuizParams = {
@@ -23,11 +22,10 @@ type QuizParams = {
 };
 
 function OrderDetails() {
-  const location = useLocation();
   const { path } = useRouteMatch();
   const dispatch = useDispatch();
   const { id } = useParams<QuizParams>();
-  const { isLoading, data, error, hasError } = useSelector(
+  const { isLoading, data } = useSelector(
     (state) => state.modalInfo
   );
   const modal = useSelector((state) => state.modalInfo.detailOrderInfo);
@@ -51,11 +49,11 @@ function OrderDetails() {
   );
 }
 
-const Container: FunctionComponent<{id: string}> = ({ id }) => {
+const Container: FunctionComponent<{ id: string }> = ({ id }) => {
   const all = useSelector((state) => state.apiList.foodData);
   const modal = useSelector((state) => state.modalInfo.detailOrderInfo);
   const allOrders = useSelector((state) => state.modalInfo.data);
-  const [order] = allOrders.orders.filter((elem:{_id : string}) => elem._id == id);
+  const [order] = allOrders!.orders.filter((elem: any) => elem._id == id);
 
   if (!order) {
     return (
@@ -122,9 +120,9 @@ const Container: FunctionComponent<{id: string}> = ({ id }) => {
   else return null
 }
 
-const Ingredients:FunctionComponent<{total : Array<newObj>| null}> = ({ total }) => {
+const Ingredients: FunctionComponent<{ total: Array<newObj> | null }> = ({ total }) => {
   const noDuplicate = Array.from(new Set(total))
-  
+
   noDuplicate.map((elem) => {
     elem.count = total!.filter((el) => el === elem).length;
     if (elem.type === "bun") {

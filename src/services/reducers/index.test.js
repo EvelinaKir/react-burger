@@ -93,7 +93,7 @@ describe(`API ingredient's list reducer`, () => {
 describe(`Ingredients constructor list reducer`, () => {
   it(`should return the initial state`, () => {
     expect(initialIngredientsConstructorList).toEqual({
-      bun: [],
+      bun: null,
       mainIngredients: [],
     });
   });
@@ -147,7 +147,7 @@ describe(`Ingredients constructor list reducer`, () => {
     expect(ingredientsConstructorList(stateBefore, action)).toEqual({
       ...stateBefore,
       mainIngredients: [],
-      bun: [],
+      bun: null,
     });
   });
 });

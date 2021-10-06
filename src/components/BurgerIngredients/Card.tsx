@@ -1,4 +1,4 @@
-import React,  {FunctionComponent} from "react";
+import React, { FunctionComponent } from "react";
 import {
   CurrencyIcon,
   Counter,
@@ -9,10 +9,10 @@ import { useDispatch } from '../../services/types/hooks'
 import { currentIngredient } from "../../services/actions/index";
 import { useDrag } from "react-dnd";
 import { itemTypes } from "../../services/actions/index";
-import {IIngredientElem} from '../../services/types/interfaces'
+import { IIngredientElem } from '../../services/types/interfacesAndTypes'
 
 
-const Card: FunctionComponent<{index: number, elem: IIngredientElem}> =({index, elem })=> {
+const Card: FunctionComponent<{ index: number, elem: IIngredientElem }> = ({ index, elem }) => {
   const dispatch = useDispatch();
   const [{ isDragging }, dragRef] = useDrag({
     type: itemTypes.ingredient,
@@ -32,7 +32,7 @@ const Card: FunctionComponent<{index: number, elem: IIngredientElem}> =({index, 
       id={elem._id}
       onClick={() => dispatch(currentIngredient(elem))}
     >
-      {elem.counter > 0 && <Counter count={elem.counter} size="default" />}
+      {elem.counter > 0 ? (<Counter count={elem.counter} size="default" />) : null}
       <img src={elem.image} alt={elem.name} />
       <div className={classNames(bIStyles.foodCardPrice, "mt-1 mb-1")}>
         <span

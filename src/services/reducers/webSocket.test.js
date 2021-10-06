@@ -126,7 +126,7 @@ describe(` websocket reducer`, () => {
   it(`should handle  WS_SEND_MESSAGE`, () => {
     const action = {
       type: types.WS_SEND_MESSAGE,
-      value: [1, 2, 3, 4, 5],
+      message: [1, 2, 3, 4, 5],
     };
     const stateBase = {
       ...initialState,
@@ -136,7 +136,7 @@ describe(` websocket reducer`, () => {
     };
     expect(webSocketAll(stateBase, action)).toEqual({
       ...stateBase,
-      message: action.value,
+      message: action.message,
     });
   });
 });

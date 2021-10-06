@@ -1,7 +1,6 @@
 import * as types from "../actions/auth";
 import { userRegistrationInfo, initialRegistation } from "./auth";
 import { userInfo, initialUserProfile } from "./auth";
-import { inputValue, initialValueInput } from "./auth";
 import { forgotRequest, initialForgotRequest } from "./auth";
 
 describe(`registration of a new user reducer`, () => {
@@ -434,77 +433,6 @@ describe(`information about current user reducer`, () => {
       ...stateBefore,
       error: null,
       hasError: false,
-    });
-  });
-});
-
-describe(`inputs value control reducer`, () => {
-  it(`should return the initial state`, () => {
-    expect(initialValueInput).toEqual({
-      name: "",
-      password: "",
-      email: "",
-      code: "",
-    });
-  });
-
-  it(`should handle INPUT_NAME_VALUE`, () => {
-    const action = {
-      type: types.INPUT_NAME_VALUE,
-      value: "some name",
-    };
-
-    expect(inputValue(initialValueInput, action)).toEqual({
-      ...initialValueInput,
-      name: action.value,
-    });
-  });
-  it(`should handle INPUT_EMAIL_VALUE`, () => {
-    const action = {
-      type: types.INPUT_EMAIL_VALUE,
-      value: "some email",
-    };
-
-    expect(inputValue(initialValueInput, action)).toEqual({
-      ...initialValueInput,
-      email: action.value,
-    });
-  });
-  it(`should handle INPUT_PASSWORD_VALUE`, () => {
-    const action = {
-      type: types.INPUT_PASSWORD_VALUE,
-      value: "some password",
-    };
-
-    expect(inputValue(initialValueInput, action)).toEqual({
-      ...initialValueInput,
-      password: action.value,
-    });
-  });
-
-  it(`should handle INPUT_LETTER_CODE_VALUE`, () => {
-    const action = {
-      type: types.INPUT_LETTER_CODE_VALUE,
-      value: "some code",
-    };
-
-    expect(inputValue(initialValueInput, action)).toEqual({
-      ...initialValueInput,
-      code: action.value,
-    });
-  });
-
-  it(`should handle INPUT_CLEAN_VALUE`, () => {
-    const action = {
-      type: types.INPUT_CLEAN_VALUE,
-    };
-
-    expect(inputValue(initialValueInput, action)).toEqual({
-      ...initialValueInput,
-      name: "",
-      password: "",
-      email: "",
-      code: "",
     });
   });
 });

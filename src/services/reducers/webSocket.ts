@@ -1,50 +1,52 @@
-import {  WS_CONNECTION_SUCCESS,
-  WS_CONNECTION_ERROR,
-  WS_CONNECTION_CLOSED,
-  WS_GET_MESSAGE,
-  WS_SEND_MESSAGE,
-  WS_CONNECTION_START,
-  WS_CONNECTION_TO_CLOSE
+import {
+    WS_CONNECTION_SUCCESS,
+    WS_CONNECTION_ERROR,
+    WS_CONNECTION_CLOSED,
+    WS_GET_MESSAGE,
+    WS_SEND_MESSAGE,
+    WS_CONNECTION_START,
+    WS_CONNECTION_TO_CLOSE
 } from '../actions/webSocket'
-import {TWSActions} from '../actions/webSocket'
+import { TWSActions } from '../actions/webSocket'
+import { TWebsocketData } from '../types/interfacesAndTypes'
 
 type TinitialState = {
-    url: null| string;
+    url: null | string;
     connected: boolean;
-    data: null | object;
+    data: TWebsocketData | null;
     close: null | boolean;
-      error: null | object;
-      info: null | object;
-      isLoading: boolean;
-      inProfile: boolean;
-      closing: boolean;
-      message: null | string;
+    error: null | object;
+    info: null | object;
+    isLoading: boolean;
+    inProfile: boolean;
+    closing: boolean;
+    message: null | string;
 }
 
 export const initialState: TinitialState = {
     url: null,
-      connected: false,
-      data: null,
-      close: null,
-      error: null,
-      info: null,
-      isLoading: false,
-      inProfile: false,
-      closing: false,
-      message: null,
+    connected: false,
+    data: null,
+    close: null,
+    error: null,
+    info: null,
+    isLoading: false,
+    inProfile: false,
+    closing: false,
+    message: null,
 }
 
 
 
-export const webSocketAll = (state = initialState, action: TWSActions):TinitialState  => {
-    switch(action.type){
-        case WS_CONNECTION_START: 
-        return {
-            ...state,
-            url: action.value,
-            inProfile: action.place,
-            isLoading: true,
-        }
+export const webSocketAll = (state = initialState, action: TWSActions): TinitialState => {
+    switch (action.type) {
+        case WS_CONNECTION_START:
+            return {
+                ...state,
+                url: action.value,
+                inProfile: action.place,
+                isLoading: true,
+            }
         case WS_CONNECTION_SUCCESS: {
             return {
                 ...state,
@@ -84,7 +86,7 @@ export const webSocketAll = (state = initialState, action: TWSActions):TinitialS
         case WS_SEND_MESSAGE: {
             return {
                 ...state,
-                message: action.value
+                message: action.message
             };
         }
         default: {

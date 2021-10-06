@@ -9,14 +9,13 @@ import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from '../../services/types/hooks'
 import { closeModal } from "../../services/actions";
 import { useHistory, useRouteMatch, useLocation } from "react-router-dom";
- import {Tlocation} from '../../services/types/hooks'
 
 const modalRoot = document.getElementById("modal-portal")!;
 
 const Modal: FunctionComponent<{ children: React.ReactNode, header?: React.ReactNode }> = ({ children, header }) => {
-  const location = useLocation<{background : {pathname: string}}>()
+  const location = useLocation<{ background: { pathname: string } }>()
 
-  const { url, path } = useRouteMatch();
+  const { url } = useRouteMatch();
   const history = useHistory();
   const closeIngredient = () => {
     dispatch(closeModal());
@@ -40,7 +39,7 @@ const Modal: FunctionComponent<{ children: React.ReactNode, header?: React.React
   if (allClose) {
     return null;
   }
- 
+
   return ReactDom.createPortal(
     <>
       <ModalOverlay closeClick={() => closeIngredient()} />

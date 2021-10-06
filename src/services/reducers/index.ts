@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import React from "react";
 import {TIndexActions} from '../actions/index'
+import {TIngredient, TModalData, TOrderSend} from '../types/interfacesAndTypes'
 import {
   GET_INGREDIENTS_API_REQUEST,
   GET_INGREDIENTS_API_SUCCESS,
@@ -31,7 +32,6 @@ import {
 
 import {
   userRegistrationInfo,
-  inputValue,
   userInfo,
   forgotRequest,
 } from "./auth";
@@ -43,7 +43,7 @@ type TinitialIngredientsApi = {
   hasError: boolean;
   error: null | object;
   isLoading: boolean;
-  foodData:  null | Array<object>
+  foodData:  null | Array<TIngredient>
 }
 
 export const initialIngredientsApi: TinitialIngredientsApi = {
@@ -54,12 +54,12 @@ export const initialIngredientsApi: TinitialIngredientsApi = {
 };
 
 type TinitialIngredientsConstructorList ={
-  bun: object | null
-  mainIngredients: Array<object>;
+  bun: TIngredient | null
+  mainIngredients: Array<TIngredient>;
 }
 
 export const initialIngredientsConstructorList: TinitialIngredientsConstructorList = {
-  bun: [],
+  bun: null,
   mainIngredients: [],
 };
 
@@ -85,7 +85,7 @@ type TinitialModal = {
   orderModal: boolean;
   detailOrderInfo: boolean;
   allClose: boolean;
-  data: null | object;
+  data: null | TModalData
   isLoading: boolean;
   error: null | object;
   hasError: boolean;
@@ -106,7 +106,7 @@ type TinitialOrder = {
   hasError: boolean;
   error: null | object;
   isLoading: boolean;
-  orderInfo: null | object;
+  orderInfo: null | TOrderSend;
   success: boolean;
 }
 export const initialOrder: TinitialOrder = {
@@ -421,7 +421,6 @@ export const rootReducer = combineReducers({
   tabSwtich: tabSwtich,
   price: totalPrice,
   registration: userRegistrationInfo,
-  inputValue: inputValue,
   userInfo: userInfo,
   forgotRequest: forgotRequest,
   webSocketAll: webSocketAll,

@@ -21,11 +21,15 @@ import {
 } from "../../services/actions/index";
 import { itemTypes } from "../../services/actions/index";
 import { useHistory } from "react-router-dom";
-import {IIelemIngredientPick, IelemIngredients} from '../../services/types/interfaces'
+import { TIngredient } from '../../services/types/interfacesAndTypes'
 
 function Buns() {
-  const { mainIngredients, bun } = useSelector(
-    (state) => state.constructorList
+  const mainIngredients = useSelector(
+    (state) => state.constructorList.mainIngredients
+  );
+
+  const bun: TIngredient | null = useSelector(
+    (state) => state.constructorList.bun
   );
 
   const dispatch = useDispatch();
@@ -38,34 +42,35 @@ function Buns() {
       dispatch(addCard(item, mainIngredients, bun));
     },
   });
+
   return (
     <div
       className={classNames(bCStyles.bunsBody, "mt-25")}
-      key={bun._id + bun.keyAdd}
+      key={1}
     >
       <div className={classNames(bCStyles.bun, "ml-6")}>
-        {bun.type && <ConstructorElement
+        {bun != null && bun.type && <ConstructorElement
           type="top"
           isLocked={true}
           text={bun.name + "\n" + "(вверх)"}
           price={bun.price}
           thumbnail={bun.image_mobile}
         />}
-        {!bun.type && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129047;</span>}
+        {bun === null && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129047;</span>}
       </div>
       <div className={bCStyles.allIngredients} ref={dropIngredient}>
-        {mainIngredients.length > 0 && <Ingredients />}
+        {mainIngredients.length > 0 && (<Ingredients />)}
         {mainIngredients.length === 0 && <span className={classNames(bCStyles.noIngredients, "text text_type_main-medium text_color_inactive")}> &#129046; Добавьте ингредиенты &#129044;</span>}
       </div>
       <div className={classNames(bCStyles.bun, "ml-6")}>
-        {bun.type && <ConstructorElement
+        {bun != null && bun.type && <ConstructorElement
           type="bottom"
           isLocked={true}
           text={bun.name + "\n" + "(вниз)"}
           price={bun.price}
           thumbnail={bun.image_mobile}
         />}
-        {!bun.type && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129045;</span>}
+        {bun === null && <span className={classNames(bCStyles.noBuns, "text text_type_main-medium text_color_inactive")}>Добавьте булку &#129045;</span>}
       </div>
     </div>
   );
@@ -75,22 +80,23 @@ function Ingredients() {
   const mainIngredients = useSelector(
     (state) => state.constructorList.mainIngredients
   );
-  return mainIngredients.map((elem: IelemIngredients, i: number) => {
-    return (
-      <Ingredient
-        elemKey={elem}
-        id={elem._id}
-        name={elem.name}
-        price={elem.price}
-        image={elem.image_mobile}
-        index={i}
-        key={elem.key + elem.keyAdd}
-      />
-    );
-  });
+  const result = mainIngredients.map((elem: TIngredient, i: number) => (<Ingredient
+    elemKey={elem}
+    id={elem._id}
+    name={elem.name}
+    price={elem.price}
+    image={elem.image_mobile}
+    index={i}
+    key={elem.key + elem.keyAdd}
+  />))
+  return (
+    <>
+      {result}
+    </>
+  );
 }
 
-const Ingredient: FunctionComponent<IIelemIngredientPick> = ({ id, name, price, image, index, elemKey }) => {
+const Ingredient: FunctionComponent<{ id: string, name: string, price: number, image: string, index: number, elemKey: TIngredient }> = ({ id, name, price, image, index, elemKey }) => {
   const dispatch = useDispatch();
   const totalCard = useSelector((state) => state.apiList);
 
@@ -100,7 +106,12 @@ const Ingredient: FunctionComponent<IIelemIngredientPick> = ({ id, name, price, 
   );
   useEffect(() => {
     dispatch(count(mainIngredients, elemKey, totalCard));
-  }, [mainIngredients, bun, deleteCard, switchCard, addCard]);
+  }, [mainIngredients, bun, addCard, count, elemKey]);
+
+  useEffect(() => {
+    console.log('totalCard=', totalCard)
+
+  }, [totalCard, deleteCard])
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -158,7 +169,7 @@ const Ingredient: FunctionComponent<IIelemIngredientPick> = ({ id, name, price, 
         price={price}
         thumbnail={image}
         handleClose={() => {
-          dispatch(deleteCard(mainIngredients, id, elemKey));
+          dispatch(deleteCard(mainIngredients, elemKey, totalCard));
         }}
       />
     </div>
@@ -167,7 +178,7 @@ const Ingredient: FunctionComponent<IIelemIngredientPick> = ({ id, name, price, 
 
 function BurgerConstructor() {
   const history = useHistory()
-  const logged = useSelector(state => state.userInfo.logged)
+  const { logged } = useSelector(state => state.userInfo)
   const total = useSelector(state => state.apiList.foodData)
   const dispatch = useDispatch();
   const { mainIngredients, bun } = useSelector(
@@ -175,16 +186,18 @@ function BurgerConstructor() {
   );
 
   useEffect(() => {
-    dispatch(countPrice(mainIngredients, bun));
+    if (bun)
+      dispatch(countPrice(mainIngredients, bun));
 
   }, [mainIngredients, bun]);
 
   const totalPrice = useSelector((state) => state.price.totalPrice);
-  let infoToSend: null | Array<object> = null
-  bun.type ? infoToSend = mainIngredients
-    .map((elem: { _id: string }) => elem._id)
-    .concat(bun._id, bun._id) : infoToSend = null
-
+  let infoToSend: null | Array<string> = null
+  if (bun) {
+    bun.type ? infoToSend = mainIngredients
+      .map((elem: { _id: string }) => elem._id)
+      .concat(bun._id, bun._id) : infoToSend = null
+  }
 
   return (
     <section className={bCStyles.body}>

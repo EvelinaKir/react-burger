@@ -5,7 +5,7 @@ import {
 } from 'react-redux';
 
 import { AppDispatch, AppThunk, RootState } from './index';
-import {Location} from 'history'
+import { Location } from 'history'
 
 export const useDispatch = () => dispatchHook<AppDispatch | AppThunk>();
 export const useSelector: TypedUseSelectorHook<RootState> = selectorHook;

@@ -9,44 +9,42 @@ import {
   countCostOrder,
 } from "../../services/actions/index";
 import {
-  useHistory,
   useRouteMatch,
-  Switch,
-  Route,
   Link,
   useLocation,
 } from "react-router-dom";
-import { useParams } from "react-router-dom";
 
 
 function OrderCards() {
   const location = useLocation();
   const { url } = useRouteMatch();
 
-  const { orders, total, totalToday } = useSelector(
-    (state) => state.webSocketAll.data
+  const orders = useSelector(
+    (state) => state.webSocketAll.data?.orders
   );
-  return (
-    <div>
-      {orders.map((elem: { _id: string, number: number, name: string, status: string, ingredients: Array<object>, createdAt: string }) => {
+  if (orders)
+    return (
+      <div>
+        {orders.map((elem: any) => {
 
-        return (
-          <Link
-            key={elem._id}
-            to={{
-              pathname: `${url}/${elem._id}`,
-              state: { background: location },
-            }}
-          >
-            <OrderCard elem={elem} key={elem._id} />
-          </Link>
-        );
-      })}
-    </div>
-  );
+          return (
+            <Link
+              key={elem._id}
+              to={{
+                pathname: `${url}/${elem._id}`,
+                state: { background: location },
+              }}
+            >
+              <OrderCard elem={elem} key={elem._id} />
+            </Link>
+          );
+        })}
+      </div>
+    );
+  else return null
 }
 
-const OrderCard: FunctionComponent<{ elem: { _id: string, number: number, name: string, status: string, ingredients: Array<object>, createdAt: string } }> = ({ elem }) => {
+const OrderCard: FunctionComponent<{ elem: any }> = ({ elem }) => {
   const dispatch = useDispatch();
   const { createdAt, ingredients, name, number } = elem;
   const all = useSelector((state) => state.apiList.foodData);

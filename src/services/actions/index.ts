@@ -1,8 +1,7 @@
 import { instance } from "./axios";
-import { getCookie } from "./auth";
-import {Dispatch} from 'redux'
-import { History } from 'history';
-import {Ielem, IElemInconstructor, IIngredientElem, newObj} from '../types/interfaces'
+import { Dispatch } from 'redux'
+import { TIngredient, TModalData, TOrderSend } from '../types/interfacesAndTypes'
+import { Ielem, IElemInconstructor, IIngredientElem, newObj } from '../types/interfacesAndTypes'
 
 export const GET_INGREDIENTS_API_REQUEST: 'GET_INGREDIENTS_API_REQUEST' = "GET_INGREDIENTS_API_REQUEST";
 export const GET_INGREDIENTS_API_SUCCESS: 'GET_INGREDIENTS_API_SUCCESS' = "GET_INGREDIENTS_API_SUCCESS";
@@ -47,7 +46,7 @@ export interface IGetIngredientsApiRequest {
 
 export interface IGetIngredientsApiSuccess {
   readonly type: typeof GET_INGREDIENTS_API_SUCCESS;
-  readonly items: Array<object>
+  readonly items: Array<TIngredient>
 }
 
 export interface IGetIngredientsApiFailed {
@@ -59,24 +58,24 @@ export interface ISendOrderRequest {
   readonly type: typeof SEND_ORDER_REQUEST;
 }
 
-export interface ISendOrderSuccess  {
+export interface ISendOrderSuccess {
   readonly type: typeof SEND_ORDER_SUCCESS;
-  readonly data: object
+  readonly data: TOrderSend
 }
 
-export interface ISendOrderFailed  {
+export interface ISendOrderFailed {
   readonly type: typeof SEND_ORDER_FAILED;
   readonly error: object
 }
 
-export interface IConstructorBun  {
+export interface IConstructorBun {
   readonly type: typeof CONSTRUCTOR_BUN;
-  readonly bun: object | null
+  readonly bun: TIngredient | null
 }
 
-export interface IConstructorMainIngredients  {
+export interface IConstructorMainIngredients {
   readonly type: typeof CONSTRUCTOR_MAIN_INGREDIENTS;
-  readonly mainIngredients: Array<object>
+  readonly mainIngredients: Array<TIngredient>
 }
 
 
@@ -106,12 +105,12 @@ export interface IModalClose {
 
 export interface IWhireCurrentIngredient {
   readonly type: typeof WRITE_CURRENT_INGREDIENT;
-  readonly name: string ;
-  readonly image: string ;
-  readonly calories: number ;
-  readonly proteins: number ;
-  readonly fat: number ;
-  readonly carbohydrates: number ;
+  readonly name: string;
+  readonly image: string;
+  readonly calories: number;
+  readonly proteins: number;
+  readonly fat: number;
+  readonly carbohydrates: number;
 
 }
 
@@ -126,7 +125,7 @@ export interface ITabSwitch {
 
 export interface IConstructorCardChange {
   readonly type: typeof CONSTRUCTOR_CARD_CHANGE;
-  readonly value: Array<object>;
+  readonly value: Array<TIngredient>;
 }
 
 export interface IConstructorClean {
@@ -140,7 +139,7 @@ export interface ICountTotalPrice {
 
 export interface ICountCard {
   readonly type: typeof COUNT_CARD;
-  readonly value: Array<object>
+  readonly value: Array<TIngredient>
 }
 
 export interface IWriteCurrentOrderDetail {
@@ -162,7 +161,7 @@ export interface IGetIngoOneOrderRequest {
 
 export interface IGetIngoOneOrderSuccess {
   readonly type: typeof GET_INFO_ONE_ORDER_SUCCESS;
-  readonly value: object
+  readonly value: TModalData
 }
 
 export interface IGetIngoOneOrderError {
@@ -170,32 +169,32 @@ export interface IGetIngoOneOrderError {
   readonly value: object
 }
 
-export type TIndexActions = 
-| IGetIngoOneOrderError
-|IGetIngoOneOrderSuccess
-|IGetIngoOneOrderRequest
-| IDeleteCurrentOrderDetail
-|IWriteCurrentOrderDetail
-|ICountCard
-|ICountTotalPrice
-|IConstructorClean
-|IConstructorCardChange
-|ITabSwitch
-|IDeleteCurrentIngredient
-|IWhireCurrentIngredient
-|IModalClose
-|IModalOpenError
-|IModalOpenOrderDetail
-|IModalOpenOrder
-|IModalOpenIngredient
-|IConstructorMainIngredients
-|IConstructorBun
-|ISendOrderFailed
-|ISendOrderSuccess
-|ISendOrderRequest
-|IGetIngredientsApiFailed
-|IGetIngredientsApiSuccess
-|IGetIngredientsApiRequest;
+export type TIndexActions =
+  | IGetIngoOneOrderError
+  | IGetIngoOneOrderSuccess
+  | IGetIngoOneOrderRequest
+  | IDeleteCurrentOrderDetail
+  | IWriteCurrentOrderDetail
+  | ICountCard
+  | ICountTotalPrice
+  | IConstructorClean
+  | IConstructorCardChange
+  | ITabSwitch
+  | IDeleteCurrentIngredient
+  | IWhireCurrentIngredient
+  | IModalClose
+  | IModalOpenError
+  | IModalOpenOrderDetail
+  | IModalOpenOrder
+  | IModalOpenIngredient
+  | IConstructorMainIngredients
+  | IConstructorBun
+  | ISendOrderFailed
+  | ISendOrderSuccess
+  | ISendOrderRequest
+  | IGetIngredientsApiFailed
+  | IGetIngredientsApiSuccess
+  | IGetIngredientsApiRequest;
 
 
 //Fetch code as an example.
@@ -243,7 +242,7 @@ export type TIndexActions =
 
 //axios code
 export function getOrderAxios(url: string) {
-  return async function (dispatch:Dispatch<TIndexActions>) {
+  return async function (dispatch: Dispatch<TIndexActions>) {
     try {
       const res = await instance.get(url);
       dispatch({
@@ -267,7 +266,7 @@ export function getOrderAxios(url: string) {
 }
 
 export function getIngredientsApiAxios() {
-  return async function (dispatch:Dispatch<TIndexActions>) {
+  return async function (dispatch: Dispatch<TIndexActions>) {
     try {
       const res = await instance.get("ingredients");
       dispatch({
@@ -295,11 +294,12 @@ export function getIngredientsApiAxios() {
   };
 }
 
-export function getConstructorIngredients(data: Array<object>) {
-  const bun: object | null = data.find((elem: IElemInconstructor) => {
-    if (elem.type === "bun")  {return elem }
-  else return null}) || null;
-  return function (dispatch:Dispatch<TIndexActions>) {
+export function getConstructorIngredients(data: Array<TIngredient>) {
+  const bun: any = data.find((elem: TIngredient) => {
+    if (elem.type === "bun") { return elem }
+    else return null
+  }) || null;
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: CONSTRUCTOR_BUN,
       bun: bun,
@@ -316,15 +316,15 @@ export function getConstructorIngredients(data: Array<object>) {
 }
 
 export function currentIngredient(elem: IIngredientElem) {
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: WRITE_CURRENT_INGREDIENT,
-      name: elem.name ,
-      image: elem.image_large ,
-      calories: elem.calories ,
-      proteins: elem.proteins ,
-      fat: elem.fat ,
-      carbohydrates: elem.carbohydrates ,
+      name: elem.name,
+      image: elem.image_large,
+      calories: elem.calories,
+      proteins: elem.proteins,
+      fat: elem.fat,
+      carbohydrates: elem.carbohydrates,
     });
     dispatch({
       type: MODAL_INGRIDIENT_OPEN,
@@ -370,7 +370,7 @@ export function currentIngredient(elem: IIngredientElem) {
 // }
 
 export function sendOrderAxios(data: Array<object>) {
-  return async function (dispatch:Dispatch<TIndexActions>) {
+  return async function (dispatch: Dispatch<TIndexActions>) {
     try {
       dispatch({
         type: SEND_ORDER_REQUEST,
@@ -395,7 +395,7 @@ export function sendOrderAxios(data: Array<object>) {
 }
 
 export function switchTab(e: string) {
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: TAB_SWITCH,
       value: e,
@@ -403,12 +403,12 @@ export function switchTab(e: string) {
   };
 }
 
-export function switchCard(dragIndex: number, hoverIndex: number, ingredients: Array<object>) {
+export function switchCard(dragIndex: number, hoverIndex: number, ingredients: Array<TIngredient>) {
   const newIngredients = [...ingredients];
   const dragIngredient = newIngredients[dragIndex];
   newIngredients.splice(dragIndex, 1);
   newIngredients.splice(hoverIndex, 0, dragIngredient);
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: "CONSTRUCTOR_CARD_CHANGE",
       value: newIngredients,
@@ -417,24 +417,35 @@ export function switchCard(dragIndex: number, hoverIndex: number, ingredients: A
 }
 
 
-export function deleteCard(mainIngredients: Array<{keyAdd: number}>, id: string, elemKey: object) {
-  let result: Array<object> = [];
-  const filtered = mainIngredients.filter((elem) => {
-    elem.keyAdd--;
-    return elem !== elemKey;
-  });
-  mainIngredients.length === 1
-    ? (result = mainIngredients)
-    : (result = filtered);
-  return function (dispatch:Dispatch<TIndexActions>) {
+export function deleteCard(mainIngredients: Array<TIngredient>, elemKey: TIngredient, totalCard: any) {
+  return function (dispatch: Dispatch<TIndexActions>) {
+    console.log(totalCard)
+    const filtered = mainIngredients.filter((elem) => {
+      elem.keyAdd--;
+      return elem !== elemKey;
+    });
+
+    if (filtered.length === 0) {
+      totalCard.foodData.filter((elem: { type: string, counter: number }) => {
+        if (elem.type !== 'bun') {
+          elem.counter = 0
+        }
+      })
+    }
+
+
     dispatch({
       type: CONSTRUCTOR_CARD_CHANGE,
-      value: result,
+      value: filtered,
+    });
+    dispatch({
+      type: COUNT_CARD,
+      value: totalCard.foodData,
     });
   };
 }
 
-export function countPrice(mainIngredients: Array<{price: number}>, bun: {type: string, price: number}) {
+export function countPrice(mainIngredients: Array<TIngredient>, bun: TIngredient) {
   let mainPrice = 0;
   let bunPrice = 0;
   if (bun.type) {
@@ -451,7 +462,7 @@ export function countPrice(mainIngredients: Array<{price: number}>, bun: {type: 
   if (mainIngredients.length === 0) {
     mainPrice = 0;
   }
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: COUNT_TOTAL_PRICE,
       value: bunPrice + mainPrice,
@@ -465,14 +476,15 @@ export const itemTypes = {
 };
 
 
-export function addCard(elem: any, mainIngredients: Array<object>, bun: {counter: number}) {
+export function addCard(elem: any, mainIngredients: Array<TIngredient>, bun: TIngredient | null) {
   let newMainIngredients = [...mainIngredients];
   let newElem: any = {};
   if (elem.item)
-    return function (dispatch:Dispatch<TIndexActions>) {
+    return function (dispatch: Dispatch<TIndexActions>) {
       if (elem.item.type === "bun" && elem.item !== bun) {
         elem.item.keyAdd = 2;
-        bun.counter = 0;
+        if (bun)
+          bun.counter = 0;
         elem.item.counter = 2;
         dispatch({
           type: CONSTRUCTOR_BUN,
@@ -497,7 +509,7 @@ export function addCard(elem: any, mainIngredients: Array<object>, bun: {counter
 }
 
 
-export function count(mainIngredients: Array<object>, elemKey: {_id: string}, totalCard: {foodData:Array<object> }) {
+export function count(mainIngredients: Array<TIngredient>, elemKey: { _id: string }, totalCard: any) {
   const newTotal = [...totalCard.foodData].filter(
     (elem: any) => elem.type !== "bun"
   );
@@ -526,7 +538,7 @@ export function count(mainIngredients: Array<object>, elemKey: {_id: string}, to
   exact.counter = counted;
   newTotal.splice(filtered, 1, exact);
 
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: COUNT_CARD,
       value: totalCard.foodData,
@@ -535,31 +547,31 @@ export function count(mainIngredients: Array<object>, elemKey: {_id: string}, to
 }
 
 export function closeModal() {
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
-      type: "MODAL_CLOSE",
+      type: MODAL_CLOSE,
     });
     dispatch({
-      type: "DELETE_CURRENT_INGREDIENT",
+      type: DELETE_CURRENT_INGREDIENT,
     });
   };
 }
 
-export function openModalOrder(infoToSend: null | Array<object>) {
+export function openModalOrder(infoToSend: any) {
   return function (dispatch: any) {
     if (infoToSend) {
       dispatch({
-        type: "CONSTRUCTOR_CLEAN",
+        type: CONSTRUCTOR_CLEAN,
       });
       dispatch(sendOrderAxios(infoToSend));
       dispatch({
-        type: "MODAL_ORDER_OPEN",
+        type: MODAL_ORDER_OPEN,
         open: true,
       });
     }
     else {
       dispatch({
-        type: "MODAL_ORDER_ERROR",
+        type: MODAL_ORDER_ERROR,
         open: true,
       });
     }
@@ -568,12 +580,12 @@ export function openModalOrder(infoToSend: null | Array<object>) {
 
 
 
-export function cleanCounter(total: Array<{counter: number}>) {
-  const result = total.map((elem) => {
+export function cleanCounter(total: any) {
+  const result = total.map((elem: { counter: number }) => {
     elem.counter = 0;
     return elem;
   });
-  return function (dispatch:Dispatch<TIndexActions>) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: COUNT_CARD,
       value: result,
@@ -588,7 +600,7 @@ export function countDate(createdAt: string) {
 
   const date = new Date(createdAt);
   const today = Number(new Date().getDate().toString());
-  const previosMonth: number  = Number(new Date().getMonth().toString());
+  const previosMonth: number = Number(new Date().getMonth().toString());
 
   const presentYear: number = Number(new Date().getFullYear().toString());
 
@@ -613,10 +625,10 @@ export function countDate(createdAt: string) {
     if (minusDay <= 0) {
       minusDay = Number(countedMonth) - Number(orderDay) + 1;
     }
-    if (orderDay == today) {
+    if (orderDay === today) {
       newDate.splice(0, 1, "Сегодня,");
     }
-    if (orderDay == today - 1) {
+    if (orderDay === today - 1) {
       newDate.splice(0, 1, "Вчера,");
     }
     if (orderDay > today && orderDay !== today - 1) {
@@ -642,8 +654,8 @@ export function countDate(createdAt: string) {
   return newDate;
 }
 
-export function currentOrder(elem: {number: number, name: string, status: string, ingredients: Array<object>, createdAt: string}) {
-  return function (dispatch :Dispatch<TIndexActions>) {
+export function currentOrder(elem: { number: number, name: string, status: string, ingredients: Array<object>, createdAt: string }) {
+  return function (dispatch: Dispatch<TIndexActions>) {
     dispatch({
       type: WRITE_CURRENT_ORDER_DETAIL,
       number: elem.number,
@@ -659,11 +671,13 @@ export function currentOrder(elem: {number: number, name: string, status: string
   };
 }
 
-export function countCostOrder(all: Array<newObj>, ingredients: Array<object>) {
+export function countCostOrder(all: any, ingredients: Array<object>) {
 
-  
-  let result: {right: null | Array<newObj>;
-    totalCost: null | number;} = {
+
+  let result: {
+    right: null | Array<newObj>;
+    totalCost: null | number;
+  } = {
     right: null,
     totalCost: null,
   };
@@ -680,22 +694,22 @@ export function countCostOrder(all: Array<newObj>, ingredients: Array<object>) {
       return 1;
     }
   });
-
-  result.totalCost = result.right
-    .map((elem: any) => {
-      if (elem.type == "bun") {
-        return elem.price * 2;
-      }
-      if (elem.type != "bun") {
-        return elem.price;
-      }
-    })
-    .reduce((a, b) => a + b, 0);
+  if (result && result.right)
+    result.totalCost = result.right
+      .map((elem: any) => {
+        if (elem.type === "bun") {
+          return elem.price * 2;
+        }
+        if (elem.type !== "bun") {
+          return elem.price;
+        }
+      })
+      .reduce((a, b) => a + b, 0);
 
   return result;
 }
 
 
 export type TindexActions = {
-  
+
 }

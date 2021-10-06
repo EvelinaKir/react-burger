@@ -7,6 +7,7 @@ import OrderCards from "../components/OrderCard/OrderCards";
 import OrderNumbers from "../components/OrderNumbers/OrderNumbers";
 import SmallSpiner from "../components/Spiner/SmallSpiner";
 import ErrorModal from "../components/Modal/ErrorModal";
+import { WS_CONNECTION_START, WS_CONNECTION_TO_CLOSE } from '../services/actions/webSocket'
 function Feed() {
   const isLoading = useSelector((state) => state.webSocketAll.isLoading);
   const dispatch = useDispatch();
@@ -14,13 +15,13 @@ function Feed() {
 
   useEffect(() => {
     dispatch({
-      type: "WS_CONNECTION_START",
+      type: WS_CONNECTION_START,
       value: "wss://norma.nomoreparties.space/orders/all",
       place: false,
     });
     return () => {
       dispatch({
-        type: "WS_CONNECTION_TO_CLOSE",
+        type: WS_CONNECTION_TO_CLOSE,
       });
     };
   }, []);

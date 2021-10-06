@@ -6,8 +6,8 @@ import { useLocation } from "react-router-dom";
 
 const LoggedProtectedRoute: FunctionComponent<RouteProps> = ({ children, ...rest }) => {
 
-  const logged = useSelector((state) => state.userInfo.logged);
-  const { state } = useLocation<{from:{ pathname: string }}>();
+  const { logged } = useSelector((state) => state.userInfo);
+  const { state } = useLocation<{ from: { pathname: string } }>();
 
   return (
     <Route

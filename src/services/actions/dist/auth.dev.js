@@ -844,24 +844,3 @@ function clearNoLogIn() {
     });
   };
 }
-
-function loggedInInput(userInfo) {
-  return function (dispatch) {
-    dispatch({
-      type: INPUT_NAME_VALUE,
-      value: userInfo.user.name
-    });
-    dispatch({
-      type: INPUT_EMAIL_VALUE,
-      value: userInfo.user.email
-    });
-    dispatch({
-      type: INPUT_PASSWORD_VALUE,
-      value: ""
-    });
-    dispatch({
-      type: USER_NEED_TO_REFRESH,
-      value: false
-    });
-  };
-}

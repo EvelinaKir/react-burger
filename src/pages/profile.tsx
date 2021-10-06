@@ -1,39 +1,41 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from '../services/types/hooks'
 import profileStyles from "./profile.module.css";
 import classNames from "classnames";
-import { Password } from "../components/Inputs/Password";
-import { NameInput } from "../components/Inputs/NameInput";
 import { NavLink } from "react-router-dom";
-import { LoginInput } from "../components/Inputs/LoginInput";
 import {
   profileChangeAxios,
   logOutAxios,
   refreshTokenAxios,
 } from "../services/actions/auth";
 import { useHistory } from "react-router-dom";
-import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import { Button, PasswordInput, Input } from "@ya.praktikum/react-developer-burger-ui-components";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
 import { Switch, useRouteMatch, useLocation, Route } from "react-router-dom";
 import SmallSpiner from "../components/Spiner/SmallSpiner";
 import OrderCards from "../components/OrderCard/OrderCards";
 import OrderDetails from "../components/Modal/OrderDetails";
 import { getCookie } from "../services/actions/auth";
-
 import ErrorModal from '../components/Modal/ErrorModal'
+import { IUserInfo } from '../services/types/interfacesAndTypes'
+import { WS_CONNECTION_START, WS_CONNECTION_TO_CLOSE } from '../services/actions/webSocket'
+import { Location } from 'history/index'
 
+type TPath = {
+  pathname: string
+} & Location
 
 function Profile() {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation<any>();
+  const location = useLocation<{ background: TPath }>();
   const { path } = useRouteMatch();
 
   useEffect(() => {
     dispatch({
-      type: "WS_CONNECTION_START",
+      type: WS_CONNECTION_START,
       value: `wss://norma.nomoreparties.space/orders?token=${getCookie(
         "accessToken"
       )}`,
@@ -41,7 +43,7 @@ function Profile() {
     });
     return () => {
       dispatch({
-        type: "WS_CONNECTION_TO_CLOSE",
+        type: WS_CONNECTION_TO_CLOSE,
       });
     };
   }, []);
@@ -63,7 +65,7 @@ function Profile() {
 }
 
 function ProfileMain() {
-
+  const location = useLocation<{ background: TPath }>();
   const isLoading = useSelector((state) => state.webSocketAll.isLoading);
   const data = useSelector((state) => state.webSocketAll.data);
   const profileText =
@@ -73,8 +75,7 @@ function ProfileMain() {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const inf = useSelector((state) => state.webSocketAll);
-  const { path } = useRouteMatch();
+
   return (
     <div className={classNames(profileStyles.mainbox)}>
       <div className={classNames(profileStyles.navigation)}>
@@ -115,7 +116,7 @@ function ProfileMain() {
           >
             Выход
           </button>
-          <Promt>{path === '/profile' ? profileText : orderListText}</Promt>
+          <Promt>{location.pathname === '/profile' ? profileText : orderListText}</Promt>
         </div>
       </div>
 
@@ -132,60 +133,83 @@ function ProfileMain() {
 }
 function ProfileInfo() {
   const dispatch = useDispatch();
-  const { email, password, name } = useSelector((state) => state.inputValue);
-  const { error, hasError, userInfo, changeIsLoading } = useSelector(
+  const { error, hasError, changeIsLoading } = useSelector(
     (state) => state.userInfo
   );
-  const changeInfo = () => {
-    dispatch(profileChangeAxios(email, password, name));
+  const { userInfo }: IUserInfo = useSelector(
+    (state) => state.userInfo
+  );
+
+
+  const [passwordValue, setPasswordValue] = useState<string>('')
+  const [emailValue, setEmailValue] = useState<string>(userInfo.user.email)
+  const [nameValue, setNameValue] = useState<string>(userInfo.user.name)
+
+  const passwordOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordValue(e.target.value)
+  }
+
+  const changeInfo = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    dispatch(profileChangeAxios(emailValue, passwordValue, nameValue));
   };
 
-  const dontMatch = userInfo.user.email != email || userInfo.user.name != name;
+  const dontMatch = userInfo.user.email != emailValue || userInfo.user.name != nameValue;
 
   return (
     <>
-      <div className={classNames(profileStyles.input, "mb-6")}>
-        <NameInput icon={"EditIcon"} />
-      </div>
-      <div className={classNames(profileStyles.input, "mb-6")}>
-        <LoginInput icon="EditIcon" placeholder={"Логин"} />
-      </div>
-      <div className={classNames(profileStyles.input, "mb-6")}>
-        <Password />
-      </div>
-      <div className={profileStyles.button}>
-        {password.length > 0 && (
+
+      <form onSubmit={changeInfo}>
+        <div className={classNames(profileStyles.input, "mb-6")}>
+          <Input type={'text'}
+            placeholder={'Имя'}
+            onChange={e => setNameValue(e.target.value)}
+            icon={'EditIcon'}
+            value={nameValue}
+            name={'name'}
+            error={false}
+            errorText={'Ошибка'} />
+        </div>
+        <div className={classNames(profileStyles.input, "mb-6")}>
+          <Input type={'text'}
+            placeholder={'Логин'}
+            onChange={e => setEmailValue(e.target.value)}
+            icon={'EditIcon'}
+            value={emailValue}
+            name={'name'}
+            error={false}
+            errorText={'Ошибка'}
+            size={'default'} />
+        </div>
+        <div className={classNames(profileStyles.input, "mb-6")}>
+          <PasswordInput onChange={passwordOnChange} value={passwordValue} name={'password'} />
+        </div>
+        <div className={profileStyles.button}>
+          {passwordValue.length > 0 && (
+
+            <Button size={dontMatch ? "small" : "medium"}>
+              Сохранить
+            </Button>
+
+          )}
+        </div>
+      </form>
+      {dontMatch && (
+        <div className={'mt-3'}>
           <Button
-            size={dontMatch ? "small" : "medium"}
+            size={passwordValue.length > 0 ? "small" : "medium"}
             onClick={() => {
-              changeInfo();
+              setPasswordValue('')
+              setEmailValue(userInfo.user.email)
+              setNameValue(userInfo.user.name)
             }}
-          >
-            Сохранить
-          </Button>
-        )}
-        {dontMatch && (
-          <Button
-            size={password.length > 0 ? "small" : "medium"}
-            onClick={() => (
-              dispatch({
-                type: "INPUT_EMAIL_VALUE",
-                value: userInfo.user.email,
-              }),
-              dispatch({
-                type: "INPUT_NAME_VALUE",
-                value: userInfo.user.name,
-              }),
-              dispatch({
-                type: "INPUT_PASSWORD_VALUE",
-                value: "",
-              })
-            )}
           >
             Отмена
           </Button>
-        )}
-      </div>
+        </div>
+
+      )}
+
       {changeIsLoading && <SmallSpiner />}
 
       {hasError && <ErrorPrompt error={error} />}
@@ -199,32 +223,34 @@ function OrderHistory() {
   const token = getCookie("accessToken")
 
   useEffect(() => {
-    if (data.message) {
-console.log('data=',data)
-      if (data.message === 'Invalid or missing token') {
-        refreshTokenAxios()
+    if (data)
+      if (data.message) {
+        if (data.message === 'Invalid or missing token') {
+          refreshTokenAxios()
+        }
       }
-    }
   }, [data, dispatch, token])
 
   useEffect(() => {
-    if (data.message === 'Invalid or missing token')
-    dispatch({
-      type: "WS_CONNECTION_START",
-      value: `wss://norma.nomoreparties.space/orders?token=${getCookie(
-        "accessToken"
-      )}`,
-      place: true,
-    });
+    if (data)
+      if (data.message === 'Invalid or missing token')
+        dispatch({
+          type: "WS_CONNECTION_START",
+          value: `wss://norma.nomoreparties.space/orders?token=${getCookie(
+            "accessToken"
+          )}`,
+          place: true,
+        });
   }, [token])
-
-  return (
-    <div className={classNames(profileStyles.orderHistoryBox)}>
-      {data.orders && !data.message && (<OrderCards />)}
-      {data.message === 'Invalid or missing token' && (<SmallSpiner />)}
-      {!data.orders && data.message !== 'Invalid or missing token' && (<div><ErrorModal typeErrorText={'Ошибка соединения!'} helpText={'Проверьте соединение и перезагрузите страницу'} /></div>)}
-    </div>
-  );
+  if (data)
+    return (
+      <div className={classNames(profileStyles.orderHistoryBox)}>
+        {data.orders && !data.message && (<OrderCards />)}
+        {data.message === 'Invalid or missing token' && (<SmallSpiner />)}
+        {!data.orders && data.message !== 'Invalid or missing token' && (<div><ErrorModal typeErrorText={'Ошибка соединения!'} helpText={'Проверьте соединение и перезагрузите страницу'} /></div>)}
+      </div>
+    );
+  else return null
 }
 
 const Promt: FunctionComponent<{ children: string }> = ({ children }) => {

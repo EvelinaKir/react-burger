@@ -9,14 +9,18 @@ import thunk from "redux-thunk";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { wsMiddleware } from "./services/wsMiddleware/wsMiddleware";
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 
 const composeEnhancers =
-  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+  typeof window === "object" && composeWithDevTools
+    ? composeWithDevTools({})
     : compose;
 
+
+
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, wsMiddleware("wss://norma.nomoreparties.space/orders"))
+  applyMiddleware(thunk, wsMiddleware())
 );
 
 export const store = createStore(rootReducer, enhancer);

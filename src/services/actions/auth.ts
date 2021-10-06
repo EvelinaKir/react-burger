@@ -1,11 +1,12 @@
 import { instance } from "./axios";
-import {Dispatch} from 'redux'
+import { Dispatch } from 'redux'
 import { History } from 'history';
-import {IUserInfo, Ires, IInfo} from '../types/interfaces'
-import {TWSActions} from './webSocket'
+import { TUserInfo, Ires, IInfo } from '../types/interfacesAndTypes'
 
 
-export const USER_SIGN_UP_REQUEST: 'USER_SIGN_UP_REQUEST'  = "USER_SIGN_UP_REQUEST";
+
+
+export const USER_SIGN_UP_REQUEST: 'USER_SIGN_UP_REQUEST' = "USER_SIGN_UP_REQUEST";
 export const USER_SIGN_UP_SUCCESS: 'USER_SIGN_UP_SUCCESS' = "USER_SIGN_UP_SUCCESS";
 export const USER_SIGN_UP_FAILED: 'USER_SIGN_UP_FAILED' = "USER_SIGN_UP_FAILED";
 
@@ -24,12 +25,6 @@ export const USER_FORGOT_FAILED: 'USER_FORGOT_FAILED' = "USER_FORGOT_FAILED";
 export const USER_RESET_REQUEST: 'USER_RESET_REQUEST' = "USER_RESET_REQUEST";
 export const USER_RESET_SUCCESS: 'USER_RESET_SUCCESS' = "USER_RESET_SUCCESS";
 export const USER_RESET_FAILED: 'USER_RESET_FAILED' = "USER_RESET_FAILED";
-
-export const INPUT_NAME_VALUE: 'INPUT_NAME_VALUE' = "INPUT_NAME_VALUE";
-export const INPUT_EMAIL_VALUE: 'INPUT_EMAIL_VALUE' = "INPUT_EMAIL_VALUE";
-export const INPUT_PASSWORD_VALUE: 'INPUT_PASSWORD_VALUE' = "INPUT_PASSWORD_VALUE";
-export const INPUT_LETTER_CODE_VALUE: 'INPUT_LETTER_CODE_VALUE' = "INPUT_LETTER_CODE_VALUE";
-export const INPUT_CLEAN_VALUE: 'INPUT_CLEAN_VALUE' = "INPUT_CLEAN_VALUE";
 
 export const GET_USER_REQUEST: 'GET_USER_REQUEST' = "GET_USER_REQUEST";
 export const GET_USER_SUCCESS: 'GET_USER_SUCCESS' = "GET_USER_SUCCESS";
@@ -72,7 +67,7 @@ export interface IUserLogInRequest {
 
 export interface IUserLogInSuccess {
   readonly type: typeof USER_LOG_IN_SUCCESS;
-  readonly value: object;
+  readonly value: TUserInfo;
 }
 
 export interface IUserLogInFailed {
@@ -86,7 +81,7 @@ export interface IUserLogOutRequest {
 
 export interface IUserLogOutSuccess {
   readonly type: typeof USER_LOG_OUT_SUCCESS;
-  readonly value: object;
+  readonly value: TUserInfo;
 }
 
 export interface IUserLogOutFailed {
@@ -105,7 +100,7 @@ export interface IUserForgotSuccess {
 
 export interface IUserForgotFailed {
   readonly type: typeof USER_FORGOT_FAILED;
-  readonly value: string | number;
+  readonly value: string | number | null;
 }
 
 export interface IUserResetRequest {
@@ -122,34 +117,13 @@ export interface IUserResetFailed {
   readonly error: string | number;
 }
 
-export interface IInputNameValue {
-  readonly type: typeof INPUT_NAME_VALUE;
-  readonly value: string;
-}
-export interface IInputEmailValue {
-  readonly type: typeof INPUT_EMAIL_VALUE;
-  readonly value: string;
-}
-export interface IInputPasswordValue {
-  readonly type: typeof INPUT_PASSWORD_VALUE;
-  readonly value: string;
-}
-export interface IInputCodeValue {
-  readonly type: typeof INPUT_LETTER_CODE_VALUE;
-  readonly value: string;
-}
-
-export interface IInputCleanValue {
-  readonly type: typeof INPUT_CLEAN_VALUE;
-}
-
 export interface IUserGetRequest {
   readonly type: typeof GET_USER_REQUEST;
 }
 
 export interface IUserGetSuccess {
   readonly type: typeof GET_USER_SUCCESS;
-  readonly value: object;
+  readonly value: TUserInfo;
 }
 
 export interface IUserGetFailed {
@@ -188,11 +162,11 @@ export interface IUserProfileChangeRequest {
 
 export interface IUserProfileChangeSuccess {
   readonly type: typeof USER_PROFILE_CHANGE_SUCCESS;
-  readonly value: object;
+  readonly value: TUserInfo;
 }
 
 export interface IUserProfileChangeFailed {
-  readonly type: typeof  USER_PROFILE_CHANGE_FAILED;
+  readonly type: typeof USER_PROFILE_CHANGE_FAILED;
   readonly error: string | number;
   readonly errorMessage: string | number;
 }
@@ -209,41 +183,36 @@ export interface IClearErrorRegistration {
   readonly type: typeof CLEAR_ERROR_REGISTRATION;
 }
 
-export type TAuthActions = 
-| IClearErrorRegistration
-| IClearErrorForgot
-| IClearErrorProfile
-| IUserProfileChangeFailed
-| IUserProfileChangeSuccess
-| IUserProfileChangeRequest
-| IUserRefreshFailed
-| IUserRefreshSuccess
-| IUserRefreshRequest
-| IUserPtofileIsReady
-| IUserNeedToRefresh
-| IUserGetFailed
-| IUserGetSuccess
-| IUserGetRequest
-| IInputCleanValue
-| IInputCodeValue
-| IInputPasswordValue
-| IInputEmailValue
-| IInputNameValue
-| IUserResetFailed
-| IUserResetSuccess
-| IUserResetRequest
-| IUserForgotFailed
-| IUserForgotSuccess
-| IUserForgotRequest
-| IUserLogOutFailed
-| IUserLogOutSuccess
-| IUserLogOutRequest
-| IUserLogInFailed
-| IUserLogInSuccess
-| IUserLogInRequest
-| IUserSignUpFailed
-| IUserSignUpSuccess
-| IUserSignUpRequest;
+export type TAuthActions =
+  | IClearErrorRegistration
+  | IClearErrorForgot
+  | IClearErrorProfile
+  | IUserProfileChangeFailed
+  | IUserProfileChangeSuccess
+  | IUserProfileChangeRequest
+  | IUserRefreshFailed
+  | IUserRefreshSuccess
+  | IUserRefreshRequest
+  | IUserPtofileIsReady
+  | IUserNeedToRefresh
+  | IUserGetFailed
+  | IUserGetSuccess
+  | IUserGetRequest
+  | IUserResetFailed
+  | IUserResetSuccess
+  | IUserResetRequest
+  | IUserForgotFailed
+  | IUserForgotSuccess
+  | IUserForgotRequest
+  | IUserLogOutFailed
+  | IUserLogOutSuccess
+  | IUserLogOutRequest
+  | IUserLogInFailed
+  | IUserLogInSuccess
+  | IUserLogInRequest
+  | IUserSignUpFailed
+  | IUserSignUpSuccess
+  | IUserSignUpRequest;
 
 
 export function setCookie(name: string, value: string, props: any): void {
@@ -274,8 +243,8 @@ export function getCookie(name: string): string | undefined {
   const matches = document.cookie.match(
     new RegExp(
       "(?:^|; )" +
-        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-        "=([^;]*)"
+      name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+      "=([^;]*)"
     )
   );
   return matches ? decodeURIComponent(matches[1]) : undefined;
@@ -292,43 +261,10 @@ export function clearNoLogIn() {
     dispatch({
       type: CLEAR_ERROR_REGISTRATION,
     });
-    dispatch({
-      type: INPUT_PASSWORD_VALUE,
-      value: "",
-    });
-    dispatch({
-      type: INPUT_NAME_VALUE,
-      value: "",
-    });
-    dispatch({
-      type: INPUT_EMAIL_VALUE,
-      value: "",
-    });
   };
 }
 
 
-
-export function loggedInInput(userInfo: IUserInfo) {
-  return function (dispatch: Dispatch<TAuthActions>): void {
-    dispatch({
-      type: INPUT_NAME_VALUE,
-      value: userInfo.user.name,
-    });
-    dispatch({
-      type: INPUT_EMAIL_VALUE,
-      value: userInfo.user.email,
-    });
-    dispatch({
-      type: INPUT_PASSWORD_VALUE,
-      value: "",
-    });
-    dispatch({
-      type: USER_NEED_TO_REFRESH,
-      value: false,
-    });
-  };
-}
 
 //AXIOS API REQUESTS
 
@@ -340,12 +276,11 @@ export async function refreshTokenAxios() {
       token: getCookie("refreshToken"),
     })
     .then((res: Ires) => {
-      
+
       if (res.status === 200) {
         const { data } = res;
-        document.cookie = `accessToken=${
-          data.accessToken.split("Bearer ")[1]
-        }; path=/`;
+        document.cookie = `accessToken=${data.accessToken.split("Bearer ")[1]
+          }; path=/`;
         document.cookie = `refreshToken=${data.refreshToken}; path=/`
       } else {
         return res.data;
@@ -357,9 +292,8 @@ export async function refreshTokenAxios() {
 
 
 
-export function logInAxios(info: IInfo) {
+export function logInAxios(email: string, password: string) {
   return async function (dispatch: Dispatch<TAuthActions>) {
-    const { email, password } = info;
     try {
       dispatch({
         type: USER_LOG_IN_REQUEST,
@@ -377,10 +311,6 @@ export function logInAxios(info: IInfo) {
         dispatch({
           type: USER_LOG_IN_SUCCESS,
           value: data,
-        });
-        dispatch({
-          type: INPUT_NAME_VALUE,
-          value: data.user.name,
         });
       }
       if (res.status !== 200) {
@@ -409,7 +339,7 @@ export function profileChangeAxios(email: string, password: string, name: string
       dispatch({
         type: USER_PROFILE_CHANGE_REQUEST,
       });
-      const res: TprofileChange = await instance.patch("auth/user", {
+      const res: any = await instance.patch("auth/user", {
         email: email,
         password: password,
         name: name,
@@ -459,12 +389,15 @@ export function resetPasswordAxios(password: string, token: string, history: His
         history.replace({ pathname: "/" });
       }
       if (res.status !== 200) {
-        throw new Error(res.status);
+        dispatch({
+          type: USER_RESET_FAILED,
+          error: res.status,
+        });
       }
     } catch (error: any) {
       dispatch({
         type: USER_RESET_FAILED,
-        error: error,
+        error: error.status,
       });
     }
   };
@@ -522,9 +455,6 @@ export function logOutAxios(history: History) {
           type: USER_LOG_OUT_SUCCESS,
           value: data,
         });
-        dispatch({
-          type: INPUT_CLEAN_VALUE,
-        });
         history.replace({ pathname: "/login" });
       }
       if (res.status !== 200) {
@@ -538,7 +468,7 @@ export function logOutAxios(history: History) {
     }
   };
 }
-export function getuserAxios() {
+export function getUserAxios() {
   return async function (dispatch: Dispatch<TAuthActions>) {
     try {
       dispatch({
@@ -573,10 +503,9 @@ export function getuserAxios() {
   };
 }
 
-interface IInfoReg extends IInfo {name: string}
+interface IInfoReg extends IInfo { name: string }
 
-export function registerUserAxios(info: IInfoReg, history: History) {
-  const { name, email, password } = info;
+export function registerUserAxios(email: string, name: string, password: string, history: History) {
   return async function (dispatch: Dispatch<TAuthActions>) {
     try {
       const res = await instance.post("auth/register", {

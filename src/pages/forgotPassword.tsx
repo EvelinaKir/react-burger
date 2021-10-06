@@ -1,16 +1,17 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "../services/types/hooks";
 import forgotStyles from "./forgotPassword.module.css";
-import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
-import { LoginInput } from "../components/Inputs/LoginInput";
+import { Button, Input } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link, useHistory } from "react-router-dom";
 import { forgotrequestAxios } from "../services/actions/auth";
 import ErrorPrompt from "../components/ErrorPrompt/ErrorPrompt";
+import { USER_FORGOT_FAILED } from '../services/actions/auth'
 
 function ForgotPassword() {
-  const value = useSelector((state) => state.inputValue.email);
+
   const { hasError, error } = useSelector((state) => state.forgotRequest);
+  const [emailValue, setEmailValue] = useState<string>('')
 
   const validateEmail = (email: string) => {
     var re = /\S+@\S+\.\S+/;
@@ -19,17 +20,19 @@ function ForgotPassword() {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const resetPassword = () => {
-    if (validateEmail(value)) {
+  const resetPassword = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (validateEmail(emailValue)) {
       // dispatch(sendForgotRequest(value));
-      dispatch(forgotrequestAxios(value));
+      dispatch(forgotrequestAxios(emailValue));
       history.replace({ pathname: "/reset-password" });
     } else
       dispatch({
-        type: "USER_FORGOT_FAILED",
+        type: USER_FORGOT_FAILED,
         value: "! Введен некорректный email",
       });
   };
+
   return (
     <div className={classNames(forgotStyles.mainbox)}>
       <span
@@ -40,15 +43,28 @@ function ForgotPassword() {
       >
         Восстановление пароля
       </span>
-      <div className={classNames(forgotStyles.input, "mb-6")}>
-        <LoginInput placeholder={"Укажите e-mail"} />
-      </div>
-      <div className={"mb-20"}>
-        <Button type="primary" size="medium" onClick={() => resetPassword()}>
-          Восстановить
-        </Button>
-        {hasError ? <ErrorPrompt error={error} /> : null}
-      </div>
+      <form onSubmit={resetPassword}>
+        <div className={classNames(forgotStyles.input, "mb-6")}>
+          <Input type={'text'}
+            placeholder={'E-mail'}
+            onChange={e => setEmailValue(e.target.value)}
+            value={emailValue}
+            name={'name'}
+            error={false}
+            errorText={'Ошибка'}
+            size={'default'} />
+        </div>
+        <div className={"mb-20"}>
+
+          <Button type="primary" size="medium">
+            Восстановить
+          </Button>
+
+
+
+        </div>
+      </form>
+      {hasError ? <ErrorPrompt error={error} /> : null}
       <div>
         <span
           className={classNames(

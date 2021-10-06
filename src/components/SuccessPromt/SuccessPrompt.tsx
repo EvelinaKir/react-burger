@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import successPrompt  from "./successPrompt.module.css";
+import successPrompt from "./successPrompt.module.css";
 
 function SuccessPrompt() {
   return (

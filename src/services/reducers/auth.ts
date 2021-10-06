@@ -1,4 +1,5 @@
 import React from "react";
+import {TUserInfo} from '../types/interfacesAndTypes'
 import {
   USER_SIGN_UP_REQUEST,
   USER_SIGN_UP_SUCCESS,
@@ -9,11 +10,6 @@ import {
   USER_LOG_OUT_REQUEST,
   USER_LOG_OUT_SUCCESS,
   USER_LOG_OUT_FAILED,
-  INPUT_NAME_VALUE,
-  INPUT_EMAIL_VALUE,
-  INPUT_PASSWORD_VALUE,
-  INPUT_LETTER_CODE_VALUE,
-  INPUT_CLEAN_VALUE,
   USER_RESET_REQUEST,
   USER_RESET_SUCCESS,
   USER_RESET_FAILED,
@@ -51,23 +47,11 @@ export const initialRegistation: TinitialRegistation = {
   regInfo: null,
 };
 
-type TinitialValueInput = {
-  name: string;
-  password: string;
-  email: string;
-  code: string;
-}
-export const initialValueInput: TinitialValueInput = {
-  name: "",
-  password: "",
-  email: "",
-  code: "",
-};
 type TinitialUserProfile ={
   hasError: boolean;
   error: null | object;
   isLoading: boolean;
-  userInfo: null | object;
+  userInfo: TUserInfo | null;
   logged: boolean;
   needToRefresh: boolean;
   refreshedTokens: null | object;
@@ -321,46 +305,6 @@ export const userInfo = (state = initialUserProfile, action: TAuthActions) => {
   }
 };
 
-export const inputValue = (state = initialValueInput, action: TAuthActions):TinitialValueInput  => {
-  switch (action.type) {
-    case INPUT_NAME_VALUE: {
-      return {
-        ...state,
-        name: action.value,
-      };
-    }
-    case INPUT_EMAIL_VALUE: {
-      return {
-        ...state,
-        email: action.value,
-      };
-    }
-    case INPUT_PASSWORD_VALUE: {
-      return {
-        ...state,
-        password: action.value,
-      };
-    }
-    case INPUT_LETTER_CODE_VALUE: {
-      return {
-        ...state,
-        code: action.value,
-      };
-    }
-    case INPUT_CLEAN_VALUE: {
-      return {
-        ...state,
-        name: "",
-        password: "",
-        email: "",
-        code: "",
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
 
 export const forgotRequest = (state = initialForgotRequest, action: TAuthActions): TinitialForgotRequest => {
   switch (action.type) {

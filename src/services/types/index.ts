@@ -3,10 +3,10 @@ import { Action, ActionCreator } from 'redux';
 import { store } from '../../index';
 
 import { TWSActions } from '../actions/webSocket';
-import {TIndexActions} from '../actions/index';
-import {TAuthActions} from '../actions/auth'
+import { TIndexActions } from '../actions/index';
+import { TAuthActions } from '../actions/auth'
 
-type TApplicationActions = TWSActions & TIndexActions & TAuthActions
+export type TApplicationActions = TWSActions & TIndexActions & TAuthActions
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
