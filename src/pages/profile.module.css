@@ -1,18 +1,31 @@
-.navOption{
+.navOption {
+    text-decoration: inherit;
+    color: #8585AD;
+    display: block;
+    max-width: 320px;
+    line-height: 64px;
+}
+
+.navOptionPromt{
     text-decoration: inherit;
     color: #8585AD;
     display: block;
     max-width: 320px;
 }
 
-.navButton{
+
+.navButton {
     background: none!important;
   border: none;
   padding: 0!important;
   color: #8585AD;
   text-decoration: none;
   cursor: pointer;
+  margin-right: auto;
+  line-height: 64px;
 }
+
+
 
 .active{
     color: #F2F2F3;
@@ -21,8 +34,8 @@
 
 
 .mainbox{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    
     
     margin-top: 20vh;
 
@@ -30,7 +43,8 @@
 
 .input{
 display: grid;
-justify-items: center;
+align-items: start;
+
 }
 
 
@@ -44,16 +58,30 @@ justify-items: center;
     
 }
 .navigation{
-    display: grid;
-    justify-items: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: start;
     margin-left: auto;
 }
 .detailed{
     margin-right: auto;
 }
 .button{
-    margin-left: auto;
     display: flex;
     justify-content: center;
     gap: 15px;
+    
+}
+
+.orderHistoryBox{
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+.navDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: start;
+    margin-left: auto;
 }

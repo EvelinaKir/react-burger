@@ -16,7 +16,7 @@ exports.withTokenRef = withTokenRef;
 exports.resetPassword = resetPassword;
 exports.clearNoLogIn = clearNoLogIn;
 exports.loggedInInput = loggedInInput;
-exports.CLEAR_ERROR_REGISTRATION = exports.CLEAR_ERROR_FOGOT = exports.CLEAR_ERROR_PROFILE = exports.PROFILE_SELECTED = exports.USER_PROFILE_CHANGE_FAILED = exports.USER_PROFILE_CHANGE_SUCCESS = exports.USER_PROFILE_CHANGE_REQUEST = exports.GET_USER_REFRESH_FAILED = exports.GET_USER_REFRESH_SUCCESS = exports.GET_USER_REFRESH_REQUEST = exports.PROFILE_IS_READY = exports.USER_NEED_TO_REFRESH = exports.GET_USER_FAILED = exports.GET_USER_SUCCESS = exports.GET_USER_REQUEST = exports.INPUT_CLEAN_VALUE = exports.INPUT_LETTER_CODE_VALUE = exports.INPUT_PASSWORD_VALUE = exports.INPUT_EMAIL_VALUE = exports.INPUT_NAME_VALUE = exports.USER_RESET_FAILED = exports.USER_RESET_SUCCESS = exports.USER_RESET_REQUEST = exports.USER_FORGOT_FAILED = exports.USER_FORGOT_SUCCESS = exports.USER_FORGOT_REQUEST = exports.USER_LOG_OUT_FAILED = exports.USER_LOG_OUT_SUCCESS = exports.USER_LOG_OUT_REQUEST = exports.USER_LOG_IN_FAILED = exports.USER_LOG_IN_SUCCESS = exports.USER_LOG_IN_REQUEST = exports.USER_SIGN_UP_FAILED = exports.USER_SIGN_UP_SUCCESS = exports.USER_SIGN_UP_REQUEST = void 0;
+exports.CLEAR_ERROR_REGISTRATION = exports.CLEAR_ERROR_FORGOT = exports.CLEAR_ERROR_PROFILE = exports.PROFILE_SELECTED = exports.USER_PROFILE_CHANGE_FAILED = exports.USER_PROFILE_CHANGE_SUCCESS = exports.USER_PROFILE_CHANGE_REQUEST = exports.GET_USER_REFRESH_FAILED = exports.GET_USER_REFRESH_SUCCESS = exports.GET_USER_REFRESH_REQUEST = exports.PROFILE_IS_READY = exports.USER_NEED_TO_REFRESH = exports.GET_USER_FAILED = exports.GET_USER_SUCCESS = exports.GET_USER_REQUEST = exports.INPUT_CLEAN_VALUE = exports.INPUT_LETTER_CODE_VALUE = exports.INPUT_PASSWORD_VALUE = exports.INPUT_EMAIL_VALUE = exports.INPUT_NAME_VALUE = exports.USER_RESET_FAILED = exports.USER_RESET_SUCCESS = exports.USER_RESET_REQUEST = exports.USER_FORGOT_FAILED = exports.USER_FORGOT_SUCCESS = exports.USER_FORGOT_REQUEST = exports.USER_LOG_OUT_FAILED = exports.USER_LOG_OUT_SUCCESS = exports.USER_LOG_OUT_REQUEST = exports.USER_LOG_IN_FAILED = exports.USER_LOG_IN_SUCCESS = exports.USER_LOG_IN_REQUEST = exports.USER_SIGN_UP_FAILED = exports.USER_SIGN_UP_SUCCESS = exports.USER_SIGN_UP_REQUEST = void 0;
 var USER_SIGN_UP_REQUEST = "USER_SIGN_UP_REQUEST";
 exports.USER_SIGN_UP_REQUEST = USER_SIGN_UP_REQUEST;
 var USER_SIGN_UP_SUCCESS = "USER_SIGN_UP_SUCCESS";
@@ -83,8 +83,8 @@ var PROFILE_SELECTED = "PROFILE_SELECTED";
 exports.PROFILE_SELECTED = PROFILE_SELECTED;
 var CLEAR_ERROR_PROFILE = "CLEAR_ERROR_PROFILE";
 exports.CLEAR_ERROR_PROFILE = CLEAR_ERROR_PROFILE;
-var CLEAR_ERROR_FOGOT = "CLEAR_ERROR_FOGOT";
-exports.CLEAR_ERROR_FOGOT = CLEAR_ERROR_FOGOT;
+var CLEAR_ERROR_FORGOT = "CLEAR_ERROR_FORGOT";
+exports.CLEAR_ERROR_FORGOT = CLEAR_ERROR_FORGOT;
 var CLEAR_ERROR_REGISTRATION = "CLEAR_ERROR_REGISTRATION";
 exports.CLEAR_ERROR_REGISTRATION = CLEAR_ERROR_REGISTRATION;
 
@@ -825,7 +825,7 @@ function clearNoLogIn() {
       type: CLEAR_ERROR_PROFILE
     });
     dispatch({
-      type: CLEAR_ERROR_FOGOT
+      type: CLEAR_ERROR_FORGOT
     });
     dispatch({
       type: CLEAR_ERROR_REGISTRATION
@@ -841,27 +841,6 @@ function clearNoLogIn() {
     dispatch({
       type: INPUT_EMAIL_VALUE,
       value: ""
-    });
-  };
-}
-
-function loggedInInput(userInfo) {
-  return function (dispatch) {
-    dispatch({
-      type: INPUT_NAME_VALUE,
-      value: userInfo.user.name
-    });
-    dispatch({
-      type: INPUT_EMAIL_VALUE,
-      value: userInfo.user.email
-    });
-    dispatch({
-      type: INPUT_PASSWORD_VALUE,
-      value: ""
-    });
-    dispatch({
-      type: USER_NEED_TO_REFRESH,
-      value: false
     });
   };
 }

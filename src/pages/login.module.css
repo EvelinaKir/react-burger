@@ -21,3 +21,7 @@ justify-items: center;
     color: #4C4CFF;
     
 }
+
+.mainbox {
+display: grid;
+}
