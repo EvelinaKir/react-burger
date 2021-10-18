@@ -27,7 +27,6 @@ React-Burger
 Стек:
 
 Typescript
-Javascript
 React
 Redux
 Redux-thunk
